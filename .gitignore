@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Gradle
+.gradle/
+build/
+out/
+
+# Maven
+target/
+
+# Node
+node_modules/
+dist/
+
+# Logs
+*.log
+
+# Env
+.env
