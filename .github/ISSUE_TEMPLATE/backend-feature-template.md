@@ -1,6 +1,6 @@
 ---
-name: ✨ Feature Request
-about: 새로운 기능이나 개선 사항을 제안합니다
+name: ✨ [Backend] Feature Request
+about: 백엔드 팀의 새로운 기능이나 개선 사항을 제안합니다
 title: "[FEAT] "
 labels: ["feature"]
 assignees: ""
