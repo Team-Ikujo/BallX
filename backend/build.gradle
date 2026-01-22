@@ -32,6 +32,7 @@ dependencies {
 
     /* postgresql */
     implementation 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     runtimeOnly 'org.postgresql:postgresql'
 
     /* lombok */
