@@ -1,7 +1,7 @@
 ---
 name: ✨ [Backend] Feature Request
 about: 백엔드 팀의 새로운 기능이나 개선 사항을 제안합니다
-title: "[BE] feature: "
+title: "[BE] feat: "
 labels: ["feature"]
 assignees: ""
 ---
