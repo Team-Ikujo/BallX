@@ -1,7 +1,7 @@
 ---
 name: 🐛 [Backend] Bug
 about: 백엔드 팀의 버그 수정 작업을 등록합니다
-title: "[BUG] "
+title: "[BE] bug: "
 labels: ["bug"]
 assignees: ""
 ---
