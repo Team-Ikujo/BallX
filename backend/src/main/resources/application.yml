@@ -25,6 +25,8 @@ spring:
           format_sql: true
           show_sql: true
           dialect: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    time-zone: Asia/Seoul
 
 oauth:
   kakao:
