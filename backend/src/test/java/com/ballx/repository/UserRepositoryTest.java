@@ -47,5 +47,6 @@ public class UserRepositoryTest {
 		log.info("user id : {}", user.getId());
 		log.info("member id : {}", member.getId());
 		log.info("user role : {}", user.getRole());
+
 	}
 }
