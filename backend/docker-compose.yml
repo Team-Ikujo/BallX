@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:18
+    restart: always
+    container_name: BallX-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql # 18+
+      #- postgres_data:/var/lib/postgresql/data
+      # postgres18 이전버젼의(ex:16) 경우 위와 같이 경로를 변경
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: ballx_local
+
+volumes:
+  postgres_data:
