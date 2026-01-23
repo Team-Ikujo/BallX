@@ -26,6 +26,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Run tests
+      - name: Make gradlew executable
         working-directory: backend
-        run: ./gradlew test
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test -p backend
