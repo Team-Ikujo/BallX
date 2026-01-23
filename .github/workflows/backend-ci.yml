@@ -27,4 +27,5 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run tests
+        working-directory: backend
         run: ./gradlew test
