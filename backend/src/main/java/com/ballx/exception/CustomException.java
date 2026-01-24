@@ -8,5 +8,9 @@ public class CustomException extends BaseException {
 		super(error);
 	}
 
+	public CustomException(ErrorCode error, Throwable cause) {
+		super(error, cause);
+	}
+
 }
 

@@ -13,8 +13,13 @@ public abstract class BaseException extends NestedRuntimeException {
 	@Accessors(fluent = true)
 	private ErrorCode error;
 
-	public BaseException(ErrorCode error) {
-		super(error.name());
+	protected BaseException(ErrorCode error) {
+		super(error.getMessage());
+		this.error = error;
+	}
+
+	protected BaseException(ErrorCode error, Throwable cause) {
+		super(error.getMessage(), cause);
 		this.error = error;
 	}
 }
