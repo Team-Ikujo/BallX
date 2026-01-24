@@ -20,12 +20,17 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '21'
+          cache: 'gradle'
+          distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.5
 
-      - name: Run tests
-        working-directory: backend
-        run: ./gradlew test
+      - name: Run Backend Tests
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: wrapper
+          arguments: :backend:test
