@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 import org.springframework.core.NestedRuntimeException;
 
-public class BaseException extends NestedRuntimeException {
+public abstract class BaseException extends NestedRuntimeException {
 
 	@Getter
 	@Accessors(fluent = true)
