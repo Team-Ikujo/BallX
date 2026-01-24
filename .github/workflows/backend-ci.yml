@@ -21,8 +21,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          cache: 'gradle'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
@@ -33,4 +33,5 @@ jobs:
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: wrapper
-          arguments: :backend:test
+          arguments: test
+          build-root-directory: backend
