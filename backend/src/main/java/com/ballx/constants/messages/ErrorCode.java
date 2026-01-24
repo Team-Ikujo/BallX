@@ -19,4 +19,8 @@ public enum ErrorCode {
 	public String format(Object... args) {
 		return MessageFormat.format(this.message, args);
 	}
+
+	public boolean isSystemError() {
+		return status.is5xxServerError();
+	}
 }
