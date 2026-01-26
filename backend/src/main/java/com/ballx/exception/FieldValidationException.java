@@ -7,10 +7,10 @@ import lombok.Getter;
 public class FieldValidationException extends BaseException {
 
 	@Getter
-	private final String field;
+	private final String message;
 
-	public FieldValidationException(String field, ErrorCode error) {
+	public FieldValidationException(ErrorCode error, String message) {
 		super(error);
-		this.field = field;
+		this.message = error.format(message);
 	}
 }
