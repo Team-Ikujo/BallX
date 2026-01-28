@@ -35,11 +35,10 @@ public class SystemExceptionHandler extends BaseExceptionHandler {
 	 */
 	@ExceptionHandler(FieldValidationException.class)
 	public ResponseEntity<ApiErrorResponse> handleFieldValidation(FieldValidationException ex) {
-		log.warn("[Field Validation] field={} code={} message={}",
-			ex.getField(),
+		log.warn("[Field Validation] code={}, message={}",
 			ex.error().name(),
 			ex.error().getMessage()
 		);
-		return toResponse(ex.error(), ex.getField());
+		return toResponse(ex);
 	}
 }
