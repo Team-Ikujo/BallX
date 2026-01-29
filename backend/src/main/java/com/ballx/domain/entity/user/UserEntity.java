@@ -2,6 +2,7 @@ package com.ballx.domain.entity.user;
 
 import com.ballx.constants.Gender;
 import com.ballx.constants.UserRole;
+import com.ballx.constants.UserStatus;
 import com.ballx.domain.entity.base.ModificationTimestampEntity;
 
 import jakarta.persistence.Column;
@@ -37,6 +38,10 @@ public class UserEntity extends ModificationTimestampEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private UserStatus status;
+
 	protected UserEntity(
 		String name, String mobile, UserRole role, Gender gender
 	) {
@@ -44,5 +49,6 @@ public class UserEntity extends ModificationTimestampEntity {
 		this.mobile = mobile;
 		this.role = role;
 		this.gender = gender;
+		this.status = UserStatus.ACTIVATED;
 	}
 }

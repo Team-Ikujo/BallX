@@ -3,10 +3,10 @@ package com.ballx.constants;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum MemberStatus {
-
-	ENABLED("정상"),
-	DISABLED("비정상");
+public enum UserStatus {
+	ACTIVATED("활성화"),
+	SUSPENDED("정지상태"),
+	DELETED("삭제상태");
 
 	private final String description;
 
