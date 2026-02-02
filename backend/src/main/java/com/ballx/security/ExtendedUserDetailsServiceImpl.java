@@ -5,12 +5,16 @@ import com.ballx.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
+@Primary
 @RequiredArgsConstructor
 public class ExtendedUserDetailsServiceImpl implements ExtendedUserDetailsService {
 
