@@ -29,6 +29,16 @@ spring:
     time-zone: Asia/Seoul
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
 
+# OTel 연동을 위한 JSON 로깅 설정 (Spring Boot 3.4+)
+logging:
+  structured:
+    format:
+      console: ${LOG_FORMAT:}  # 환경변수로 JSON 활성화 (LOG_FORMAT=logstash)
+  level:
+    root: INFO
+    com.ballx: ${LOG_LEVEL:INFO}
+    org.hibernate.SQL: WARN
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   access-valid-time: ${JWT_ACCESS_TIME}
