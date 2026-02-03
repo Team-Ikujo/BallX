@@ -73,3 +73,7 @@ backend/.DS_Store
 ### QClass ###
 backend/src/main/generated/**
 
+### Claude Code ###
+.claude/
+CLAUDE.md
+.claudeignore
