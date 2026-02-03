@@ -44,6 +44,13 @@ jwt:
   access-valid-time: ${JWT_ACCESS_TIME}
   refresh-valid-time: ${JWT_REFRESH_TIME}
 
+sms:
+  api:
+    key: ${SMS_API_KEY}
+    secret: ${SMS_API_SECRET}
+    sender: ${SMS_API_SENDER}
+    content: "[BallX] 인증번호 [{code}]를 입력해주세요."
+    domain: ${SMS_API_DOMAIN}
 
 oauth:
   kakao:
