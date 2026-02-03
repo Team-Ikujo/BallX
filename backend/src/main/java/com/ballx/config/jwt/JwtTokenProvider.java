@@ -34,7 +34,7 @@ public class JwtTokenProvider {
 	private static final String MOBILE_CLAIM_KEY = "mobile";
 	private static final String JWT_ID_KEY = "jti";
 
-	public String create(UUID id, String mobile, UserRole role) {
+	public String createAccess(UUID id, String mobile, UserRole role) {
 		Date issuedAt = new Date();
 		Date expireAt = new Date(issuedAt.getTime() + jwtProperties.accessValidTime().toMillis());
 		String randomUUID = UUID.randomUUID().toString();
@@ -43,6 +43,19 @@ public class JwtTokenProvider {
 			.claim(JWT_ID_KEY, randomUUID)
 			.claim(ROLE_CLAIM_KEY, role.name())
 			.claim(MOBILE_CLAIM_KEY, mobile)
+			.issuedAt(issuedAt)
+			.expiration(expireAt)
+			.signWith(jwtProperties.secretKey())
+			.compact();
+	}
+
+	public String createRefresh(UUID id) {
+		Date issuedAt = new Date();
+		Date expireAt = new Date(issuedAt.getTime() + jwtProperties.refreshValidTime().toMillis());
+		String randomUUID = UUID.randomUUID().toString();
+		return Jwts.builder()
+			.subject(id.toString())
+			.claim(JWT_ID_KEY, randomUUID)
 			.issuedAt(issuedAt)
 			.expiration(expireAt)
 			.signWith(jwtProperties.secretKey())
@@ -81,5 +94,4 @@ public class JwtTokenProvider {
 			.parseSignedClaims(token)
 			.getPayload();
 	}
-
 }
