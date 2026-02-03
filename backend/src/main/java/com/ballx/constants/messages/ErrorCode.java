@@ -21,6 +21,8 @@ public enum ErrorCode {
 	AUTH_ACCESS_EXPIRED(HttpStatus.UNAUTHORIZED, "엑세스 토큰이 만료되었습니다."),
 	AUTH_REFRESH_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다. 재로그인이 필요합니다."),
 
+	AUTH_USER_INACTIVE(HttpStatus.FORBIDDEN,"사용자 계정이 비활성화되었습니다."),
+
 	// 타입 관련 Error
 	TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "{0} 타입 오류"),
 	MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "{0} 파라미터 필요"),
