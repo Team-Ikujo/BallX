@@ -1,19 +1,16 @@
-package com.ballx.domain.entity.oauth;
+package com.ballx.domain.entity.dto.response.oauth;
 
 import java.util.Map;
 
-import com.ballx.constants.OAuthProvider;
+import com.ballx.constants.OAuth2Provider;
 
 public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 	private final Map<String, Object> attributes;
-	private final String accessToken;
 	private final String id;
 	private final String email;
 	private final String name;
-	private final String gender;
 
-	public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
-		this.accessToken = accessToken;
+	public KakaoOAuth2UserInfo(Map<String, Object> attributes) {
 		// kakaoAccount 에 attributes Map이 할당되어 있음
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 		Map<String, Object> kakaoProfile = (Map<String, Object>)kakaoAccount.get("profile");
@@ -23,29 +20,18 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 		this.email = attributes.get("email").toString();
 
 		this.name = null;
-		this.gender = null;
 
 		this.attributes.put("id", id);
 		this.attributes.put("email", this.email);
 	}
 
 	@Override
-	public OAuthProvider getProvider() {
-		return OAuthProvider.KAKAO;
+	public OAuth2Provider getProvider() {
+		return OAuth2Provider.KAKAO;
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	@Override
-	public String getId() {
+	public String getProviderId() {
 		return id;
 	}
 
@@ -59,8 +45,4 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 		return name;
 	}
 
-	@Override
-	public String getGender() {
-		return gender;
-	}
 }

@@ -1,0 +1,40 @@
+package com.ballx.domain.entity.dto.response.oauth;
+
+import java.util.Map;
+
+import com.ballx.constants.OAuth2Provider;
+
+public class NaverOAuth2UserInfo implements OAuth2UserInfo {
+	private final Map<String, Object> attributes;
+	private final String id;
+	private final String email;
+	private final String name;
+
+	public NaverOAuth2UserInfo(Map<String, Object> attributes) {
+		this.attributes = (Map<String, Object>)attributes.get("response");
+		this.id = this.attributes.get("id").toString();
+		this.email = this.attributes.get("email").toString();
+		this.name = this.attributes.get("name").toString();
+	}
+
+	@Override
+	public OAuth2Provider getProvider() {
+		return OAuth2Provider.NAVER;
+	}
+
+	@Override
+	public String getProviderId() {
+		return id;
+	}
+
+	@Override
+	public String getEmail() {
+		return email;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+}
