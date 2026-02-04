@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidMobile {
 
-	String message() default "휴대폰 번호 형식이 올바르지 않습니다.";
+	String message() default "휴대전화 번호 형식이 올바르지 않습니다.";
 
 	Class<?>[] groups() default {};
 
