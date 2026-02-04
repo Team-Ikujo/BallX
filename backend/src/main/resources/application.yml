@@ -28,6 +28,13 @@ spring:
   jackson:
     time-zone: Asia/Seoul
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+  data:
+    redis:
+      ssl:
+        enabled: true
+      cluster:
+        nodes: ${REDIS_HOST}
+        max-redirects: 3
 
 # OTel 연동을 위한 JSON 로깅 설정 (Spring Boot 3.4+)
 logging:
