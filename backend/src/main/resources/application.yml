@@ -59,7 +59,7 @@ spring:
             scope:
               - email
               - profile
-
+              
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -71,8 +71,19 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+            
+# OTel 연동을 위한 JSON 로깅 설정 (Spring Boot 3.4+)
+logging:
+  structured:
+    format:
+      console: ${LOG_FORMAT:}  # 환경변수로 JSON 활성화 (LOG_FORMAT=logstash)
+  level:
+    root: INFO
+    com.ballx: ${LOG_LEVEL:INFO}
+    org.hibernate.SQL: WARN
 
 jwt:
   secret: ${JWT_SECRET_KEY}
-  access-valid-time: ${JWT_ACCESS_TIME:300000}
-  refresh-valid-time: ${JWT_REFRESH_TIME:43200000}
+  access-valid-time: ${JWT_ACCESS_TIME}
+  refresh-valid-time: ${JWT_REFRESH_TIME}
+
