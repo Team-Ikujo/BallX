@@ -6,11 +6,13 @@ import com.ballx.constants.OAuth2Provider;
 
 public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	private final Map<String, Object> attributes;
+	private final String accessToken;
 	private final String id;
 	private final String email;
 	private final String name;
 
-	public NaverOAuth2UserInfo(Map<String, Object> attributes) {
+	public NaverOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+		this.accessToken = accessToken;
 		this.attributes = (Map<String, Object>)attributes.get("response");
 		this.id = this.attributes.get("id").toString();
 		this.email = this.attributes.get("email").toString();
@@ -20,6 +22,16 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	@Override
 	public OAuth2Provider getProvider() {
 		return OAuth2Provider.NAVER;
+	}
+
+	@Override
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 
 	@Override
