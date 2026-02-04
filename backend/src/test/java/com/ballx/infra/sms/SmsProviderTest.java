@@ -33,7 +33,7 @@ class SmsProviderTest {
 
 		SmsProvider smsProvider = new SmsProvider(smsProperties, defaultMessageService);
 
-		String receiver = "{Receiver}"; // 필요 시 받는 이 휴대폰번호 정확히 기입 후 테스트 진행
+		String receiver = "{Receiver}"; // 필요 시 받는 이 휴대전화 번호 정확히 기입 후 테스트 진행
 
 		smsProvider.send(receiver, "123123");
 
