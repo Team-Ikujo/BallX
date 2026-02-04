@@ -77,3 +77,6 @@ backend/src/main/generated/**
 .claude/
 CLAUDE.md
 .claudeignore
+
+### Monitoring ###
+monitoring/otel-agent/*.jar
