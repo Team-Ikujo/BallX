@@ -54,6 +54,13 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
+    /* Sms nurigo */
+    implementation 'net.nurigo:sdk:4.3.2'
+
+    /* Redis */
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.32.0'
+
     /* JSON Logging (OTel 연동용) */
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
 
