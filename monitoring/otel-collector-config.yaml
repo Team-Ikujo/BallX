@@ -1,0 +1,80 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Docker 컨테이너 로그 수집 (EC2/Dev 환경용, K8s에서는 DaemonSet으로 대체)
+  filelog:
+    include:
+      - /var/lib/docker/containers/*/*.log
+    operators:
+      # Docker JSON 로그 포맷 파싱
+      - type: json_parser
+        id: docker_parser
+        output: extract_metadata
+        timestamp:
+          parse_from: attributes.time
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+      # 로그 메시지 추출
+      - type: move
+        id: extract_metadata
+        from: attributes.log
+        to: body
+      # Spring Boot JSON 로그 파싱 (logstash format)
+      - type: json_parser
+        id: spring_parser
+        parse_from: body
+        if: body matches "^\\{"
+      # 라벨 추출
+      - type: move
+        from: attributes.level
+        to: attributes.severity
+        if: attributes.level != nil
+      - type: move
+        from: attributes.logger_name
+        to: attributes.logger
+        if: attributes.logger_name != nil
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+
+  # 리소스 속성 추가
+  resource:
+    attributes:
+      - key: service.namespace
+        value: ballx
+        action: upsert
+
+exporters:
+  # Loki로 로그 전송
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    default_labels_enabled:
+      exporter: true
+      level: true
+
+  # Tempo로 트레이스 전송
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # 디버깅용 콘솔 출력
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/tempo, debug]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [batch, resource]
+      exporters: [loki, debug]
