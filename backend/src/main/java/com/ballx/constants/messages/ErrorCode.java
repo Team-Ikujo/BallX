@@ -20,6 +20,12 @@ public enum ErrorCode {
 	AUTH_INVALID(HttpStatus.UNAUTHORIZED, "올바르지 않은 인증 정보입니다."),
 	AUTH_ACCESS_EXPIRED(HttpStatus.UNAUTHORIZED, "엑세스 토큰이 만료되었습니다."),
 	AUTH_REFRESH_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다. 재로그인이 필요합니다."),
+	AUTH_USER_INACTIVE(HttpStatus.FORBIDDEN,"사용자 계정이 비활성화되었습니다."),
+	AUTH_DUPLICATE_ACCOUNT(HttpStatus.CONFLICT,"이미 해당 전화번호로 가입된 계정이 존재합니다."),
+	AUTH_INVALID_DEVICE_ID(HttpStatus.BAD_REQUEST, "deviceId는 필수입니다."),
+
+	// User Error
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 유저를 찾을 수 없습니다."),
 
 	// 타입 관련 Error
 	TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "{0} 타입 오류"),
