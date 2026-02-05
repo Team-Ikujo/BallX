@@ -1,7 +1,5 @@
 package com.ballx.config.client;
 
-import java.time.Duration;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +13,6 @@ import com.ballx.config.properties.RestClientProperties;
 import com.ballx.exception.client.handler.ExternalErrorHandler;
 
 @Configuration
-@EnableConfigurationProperties(RestClientProperties.class)
 public class RestClientConfig {
 
 	@Bean
