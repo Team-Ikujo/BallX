@@ -5,6 +5,7 @@ public final class SecurityPath {
 	public static final String[] PUBLIC = {
 		"/error",
 		"/favicon.ico",
+		"/oauth2/redirect",
 
 		// oauth2 provider
 		"/api/google/auth/redirect",

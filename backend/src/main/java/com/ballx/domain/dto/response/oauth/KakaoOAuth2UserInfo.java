@@ -13,7 +13,6 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 
 	public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
 		this.accessToken = accessToken;
-		// kakaoAccount 에 attributes Map이 할당되어 있음
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 
 		this.attributes = (Map<String, Object>)kakaoAccount.get("profile");

@@ -36,18 +36,15 @@ public class OAuth2Service {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final OAuth2UserUnlinkManager oAuth2UserUnlinkManager;
 
-	// 로그인 시도
 	public OAuth2StatusResponse checkOAuth2Status(
 		ProviderType provider,
 		String providerId,
 		String email
 	) {
-		// 해당 소셜 계정으로 가입된 OAuth2Entity 확인
 		Optional<SocialProviderEntity> checkOAuth2Entity =
 			oAuth2Repository.findByProviderAndProviderId(provider, providerId);
 
 		if (checkOAuth2Entity.isPresent()) {
-			// 기존 회원 - 로그인 완료
 			SocialProviderEntity socialProviderEntity = checkOAuth2Entity.get();
 			MemberEntity member = socialProviderEntity.getMember();
 
@@ -57,11 +54,9 @@ public class OAuth2Service {
 				member.getMobile()
 			);
 		}
-		// 신규 회원 - 회원 가입 필요
 		return OAuth2StatusResponse.needSignup(provider, email);
 	}
 
-	// 회원 가입
 	@Transactional
 	public OAuth2TokenResponse signUp(
 		OAuth2SignUpRequest request,
@@ -69,17 +64,14 @@ public class OAuth2Service {
 		String providerId,
 		String email
 	) {
-		// 번호로 기존 멤버 확인
 		if (memberRepository.existsByMobile(request.mobile())) {
 			throw new BusinessException("이미 가입 되어 있는 번호입니다.");
 		}
 
-		// 이미 연동 된 소셜인지 확인
 		if (oAuth2Repository.findByProviderAndProviderId(provider, providerId).isPresent()) {
 			throw new BusinessException("이미 연동 되어 있는 소셜계정입니다.");
 		}
 
-		// 멤버 생성
 		MemberEntity member = MemberEntity.create(
 			request.name(),
 			request.mobile(),
@@ -88,7 +80,6 @@ public class OAuth2Service {
 		);
 		memberRepository.save(member);
 
-		// 소셜 연동
 		SocialProviderEntity socialProviderEntity = SocialProviderEntity.create(
 			member,
 			provider,
@@ -97,7 +88,6 @@ public class OAuth2Service {
 		);
 		oAuth2Repository.save(socialProviderEntity);
 
-		// JWT 토큰 발급
 		String accessToken = jwtTokenProvider.create(
 			member.getId(),
 			member.getMobile(),
@@ -107,7 +97,6 @@ public class OAuth2Service {
 		return OAuth2TokenResponse.of(accessToken, 3600000L);
 	}
 
-	// 소셜 계정 추가 연동
 	@Transactional
 	public OAuth2LinkResponse linkAccount(
 		OAuth2LinkRequest request,
@@ -115,16 +104,13 @@ public class OAuth2Service {
 		String providerId,
 		String email
 	) {
-		// 번호로 기존 멤버 확인
 		MemberEntity member = memberRepository.findByMobile(request.mobile())
 			.orElseThrow(() -> new BusinessException("등록되지 않은 휴대폰 번호입니다."));
 
-		// 이미 연동된 소셜인지 확인
 		if (oAuth2Repository.existsByMemberAndProvider(member, provider)) {
 			throw new BusinessException("이미 연동된 소셜 계정입니다.");
 		}
 
-		// 소셜 연동
 		SocialProviderEntity socialProviderEntity = SocialProviderEntity.create(
 			member,
 			provider,
@@ -136,19 +122,16 @@ public class OAuth2Service {
 		return OAuth2LinkResponse.of(provider, email);
 	}
 
-	// 로그인
 	public OAuth2TokenResponse login(
 		ProviderType provider,
 		String providerId
 	) {
-		// 소셜로 멤버 확인
 		SocialProviderEntity socialProviderEntity = oAuth2Repository
 			.findByProviderAndProviderId(provider, providerId)
 			.orElseThrow(() -> new BusinessException("등록되지 않은 소셜 계정입니다."));
 
 		MemberEntity member = socialProviderEntity.getMember();
 
-		// JWT 토큰 발급
 		String accessToken = jwtTokenProvider.create(
 			member.getId(),
 			member.getMobile(),
@@ -158,12 +141,10 @@ public class OAuth2Service {
 		return OAuth2TokenResponse.of(accessToken, 3600000L);
 	}
 
-	// 번호로 기존 멤버 확인
 	public boolean existsByMobile(String mobile) {
 		return memberRepository.existsByMobile(mobile);
 	}
 
-	// 연동 해제
 	@Transactional
 	public void unlinkOAuth2Account(
 		UUID memberId,
@@ -171,27 +152,22 @@ public class OAuth2Service {
 		String providerId,
 		String accessToken
 	) {
-		// 멤버 확인
 		MemberEntity member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException("멤버를 찾을 수 없습니다."));
 
-		// 소셜 연동 조회
 		SocialProviderEntity socialProviderEntity = oAuth2Repository
 			.findByProviderAndProviderId(provider, providerId)
 			.orElseThrow(() -> new BusinessException("연동된 소셜 계정을 찾을 수 없습니다."));
 
-		// 본인 계정인지 확인
 		if (!socialProviderEntity.getMember().getId().equals(member.getId())) {
 			throw new BusinessException("본인 계정이 아닙니다.");
 		}
 
-		// 소셜 연동 최소 개수
 		long oAuth2Count = oAuth2Repository.countByMember(member);
 		if (oAuth2Count <= 1) {
 			throw new BusinessException("최소 한 개의 소셜 계정은 유지해야 합니다.");
 		}
 
-		// 소셜 연동 해제
 		try {
 			oAuth2UserUnlinkManager.unlink(provider, accessToken);
 			log.info("연동 해제 성공 : Provider: {}, MemberId: {}", provider, memberId);

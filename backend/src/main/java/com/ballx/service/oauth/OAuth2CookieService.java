@@ -21,12 +21,7 @@ public class OAuth2CookieService {
 	private static final String OAUTH2_ACCESS_TOKEN_COOKIE = "oauth2_access_token";
 	private static final int COOKIE_EXPIRE_SECONDS = 300;
 
-	/**
-	 * OAuth2 정보를 쿠키에 저장
-	 */
 	public void saveOAuth2InfoToCookie(HttpServletResponse response, OAuth2UserInfo userInfo) {
-		log.debug("Saving OAuth2 info to cookie - Provider: {}", userInfo.getProvider());
-
 		CookieUtils.addCookie(response, OAUTH2_PROVIDER_COOKIE,
 			userInfo.getProvider().name(), COOKIE_EXPIRE_SECONDS);
 		CookieUtils.addCookie(response, OAUTH2_PROVIDER_ID_COOKIE,
@@ -37,12 +32,7 @@ public class OAuth2CookieService {
 			userInfo.getAccessToken(), COOKIE_EXPIRE_SECONDS);
 	}
 
-	/**
-	 * 쿠키에서 OAuth2 정보 추출
-	 */
 	public OAuth2InfoResponse getOAuth2InfoFromCookie(HttpServletRequest request) {
-		log.debug("Extracting OAuth2 info from cookie");
-
 		String provider = getCookieValue(request, OAUTH2_PROVIDER_COOKIE);
 		String providerId = getCookieValue(request, OAUTH2_PROVIDER_ID_COOKIE);
 		String email = getCookieValue(request, OAUTH2_EMAIL_COOKIE);
@@ -58,12 +48,7 @@ public class OAuth2CookieService {
 		);
 	}
 
-	/**
-	 * OAuth2 관련 쿠키 삭제
-	 */
 	public void deleteOAuth2InfoCookie(HttpServletRequest request, HttpServletResponse response) {
-		log.debug("Deleting OAuth2 cookies");
-
 		CookieUtils.deleteCookie(request, response, OAUTH2_PROVIDER_COOKIE);
 		CookieUtils.deleteCookie(request, response, OAUTH2_PROVIDER_ID_COOKIE);
 		CookieUtils.deleteCookie(request, response, OAUTH2_EMAIL_COOKIE);

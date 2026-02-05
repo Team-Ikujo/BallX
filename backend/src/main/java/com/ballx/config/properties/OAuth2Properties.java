@@ -19,13 +19,11 @@ public record OAuth2Properties(
 	List<String> authorizedRedirectUris
 ) {
 
-	// Compact Constructor
 	public OAuth2Properties {
 		if (authorizedRedirectUris == null) {
 			authorizedRedirectUris = new ArrayList<>();
 		}
 
-		// defaultRedirectUri를 authorized 목록에 자동 추가
 		if (!authorizedRedirectUris.contains(defaultRedirectUri)) {
 			authorizedRedirectUris = new ArrayList<>(authorizedRedirectUris);
 			authorizedRedirectUris.add(defaultRedirectUri);
@@ -36,7 +34,6 @@ public record OAuth2Properties(
 		log.info("   Authorized URIs: {}", authorizedRedirectUris);
 	}
 
-	// redirecturi 검증
 	public boolean isAuthorizedRedirectUri(String uri) {
 		if (uri == null || uri.isBlank()) {
 			return false;
@@ -50,7 +47,6 @@ public record OAuth2Properties(
 			);
 	}
 
-	// 와일드카드 패턴 매칭
 	private boolean matchesPattern(String uri, String pattern) {
 		if (!pattern.contains("*")) {
 			return false;

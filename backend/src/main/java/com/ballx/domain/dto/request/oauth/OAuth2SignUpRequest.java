@@ -17,11 +17,11 @@ public record OAuth2SignUpRequest(
 	@Pattern(regexp = "^(0\\d{1,2})-(\\d{3,4})-(\\d{4})$")
 	String mobile,
 
-	@NotNull(message = "MALE , FEMALE")
+	@NotNull(message = "성별은 필수 항목 입니다")
 	Gender gender,
 
 	@NotNull
-	@Past // 과거여야 함
+	@Past
 	LocalDate birthDate
 ) {
 

@@ -58,7 +58,6 @@ public class SecurityConfig {
 			).authorizeHttpRequests(
 				auth -> auth
 					.requestMatchers(SecurityPath.PUBLIC).permitAll()
-					.requestMatchers("/oauth2/redirect").permitAll()
 					.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2
