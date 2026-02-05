@@ -2,6 +2,7 @@ package com.ballx.domain.entity.oauth;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,8 @@ class OAuth2EntityTest {
 		member = MemberEntity.create(
 			"홍길동",
 			"010-1234-5678",
-			Gender.MALE
+			Gender.MALE,
+			LocalDate.of(2026, 2, 4)
 		);
 		entityManager.persist(member);
 		entityManager.flush();
@@ -173,7 +175,8 @@ class OAuth2EntityTest {
 		MemberEntity member2 = MemberEntity.create(
 			"홍길동",
 			"010-1234-5678",
-			Gender.FEMALE
+			Gender.FEMALE,
+			LocalDate.of(2026, 2, 4)
 		);
 		entityManager.persistAndFlush(member2);
 
