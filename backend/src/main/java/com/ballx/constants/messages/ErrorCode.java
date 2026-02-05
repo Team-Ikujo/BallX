@@ -1,11 +1,11 @@
 package com.ballx.constants.messages;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import java.text.MessageFormat;
 
 import org.springframework.http.HttpStatus;
 
-import java.text.MessageFormat;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
@@ -20,11 +20,14 @@ public enum ErrorCode {
 	AUTH_INVALID(HttpStatus.UNAUTHORIZED, "올바르지 않은 인증 정보입니다."),
 	AUTH_ACCESS_EXPIRED(HttpStatus.UNAUTHORIZED, "엑세스 토큰이 만료되었습니다."),
 	AUTH_REFRESH_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다. 재로그인이 필요합니다."),
+	UNAUTHORIZED_REDIRECT_URI(HttpStatus.UNAUTHORIZED, "허용되지 않은 리다이렉트 URI입니다."),
 
 	// 타입 관련 Error
 	TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "{0} 타입 오류"),
 	MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "{0} 파라미터 필요"),
 	INVALID_FORMAT(HttpStatus.BAD_REQUEST, "{0} 형식 오류"),
+
+	ALREADY_LINKED(HttpStatus.BAD_REQUEST, "{0} 이미 연결되어 있습니다"),
 
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.");
 
