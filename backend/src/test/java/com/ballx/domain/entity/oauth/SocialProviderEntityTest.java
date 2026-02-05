@@ -173,8 +173,8 @@ class SocialProviderEntityTest {
 	@Test
 	void 관계_확인_다른_멤버() {
 		MemberEntity member2 = MemberEntity.create(
-			"홍길동",
-			"010-1234-5678",
+			"동홍길",
+			"010-1234-5679",
 			Gender.FEMALE,
 			LocalDate.of(2026, 2, 4)
 		);
