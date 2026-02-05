@@ -1,19 +1,25 @@
 package com.ballx.config.properties;
 
+import java.util.Set;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spring.security.oauth2.client.registration.kakao")
 public record KakaoSocialProperties(
-	String clientId,
-	String clientSecret,
-	String redirectUri,
 	String authorizationGrantType,
 	String clientAuthenticationMethod,
-	Provider provider
+	String clientId,
+	String clientName,
+	String clientSecret,
+	String redirectUri,
+	Set<String> scope
 ) {
 	public record Provider(
 		String authorizationUri,
+		String issuerUri,
+		String jwkSetUri,
 		String tokenUri,
+		String UserInfoAuthenticationMethod,
 		String userInfoUri,
 		String userNameAttribute
 	) {
