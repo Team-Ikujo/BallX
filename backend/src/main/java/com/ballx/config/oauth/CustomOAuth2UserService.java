@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 import com.ballx.constants.UserRole;
 import com.ballx.domain.dto.response.oauth.GoogleOAuth2UserInfo;
 import com.ballx.domain.dto.response.oauth.KakaoOAuth2UserInfo;
@@ -50,11 +50,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String accessToken, Map<String,
 			Object> attributes
 	) {
-		if (OAuth2Provider.GOOGLE.getRegistrationId().equals(registrationId)) {
+		if (ProviderType.GOOGLE.getRegistrationId().equals(registrationId)) {
 			return new GoogleOAuth2UserInfo(accessToken, attributes);
-		} else if (OAuth2Provider.KAKAO.getRegistrationId().equals(registrationId)) {
+		} else if (ProviderType.KAKAO.getRegistrationId().equals(registrationId)) {
 			return new KakaoOAuth2UserInfo(accessToken, attributes);
-		} else if (OAuth2Provider.NAVER.getRegistrationId().equals(registrationId)) {
+		} else if (ProviderType.NAVER.getRegistrationId().equals(registrationId)) {
 			return new NaverOAuth2UserInfo(accessToken, attributes);
 		} else {
 			throw new OAuth2AuthenticationProcessingException(

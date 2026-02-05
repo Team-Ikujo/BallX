@@ -2,7 +2,7 @@ package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 
 public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 	private final String accessToken;
@@ -28,8 +28,8 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 	}
 
 	@Override
-	public OAuth2Provider getProvider() {
-		return OAuth2Provider.KAKAO;
+	public ProviderType getProvider() {
+		return ProviderType.KAKAO;
 	}
 
 	@Override

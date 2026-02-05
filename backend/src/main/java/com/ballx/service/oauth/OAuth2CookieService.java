@@ -2,7 +2,7 @@ package com.ballx.service.oauth;
 
 import org.springframework.stereotype.Service;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 import com.ballx.domain.dto.response.oauth.OAuth2InfoResponse;
 import com.ballx.domain.dto.response.oauth.OAuth2UserInfo;
 import com.ballx.utils.CookieUtils;
@@ -51,7 +51,7 @@ public class OAuth2CookieService {
 			.orElse(null);
 
 		return new OAuth2InfoResponse(
-			OAuth2Provider.valueOf(provider),
+			ProviderType.valueOf(provider),
 			providerId,
 			email,
 			accessToken

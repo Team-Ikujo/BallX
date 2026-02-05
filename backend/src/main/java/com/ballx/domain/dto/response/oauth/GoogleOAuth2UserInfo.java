@@ -2,7 +2,7 @@ package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 
 public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 	private final String accessToken;
@@ -20,8 +20,8 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 	}
 
 	@Override
-	public OAuth2Provider getProvider() {
-		return OAuth2Provider.GOOGLE;
+	public ProviderType getProvider() {
+		return ProviderType.GOOGLE;
 	}
 
 	@Override

@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ballx.config.jwt.JwtTokenProvider;
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 import com.ballx.domain.dto.request.oauth.OAuth2LinkRequest;
 import com.ballx.domain.dto.request.oauth.OAuth2SignUpRequest;
 import com.ballx.domain.dto.response.oauth.OAuth2AccountResponse;
 import com.ballx.domain.dto.response.oauth.OAuth2LinkResponse;
 import com.ballx.domain.dto.response.oauth.OAuth2StatusResponse;
 import com.ballx.domain.dto.response.oauth.OAuth2TokenResponse;
-import com.ballx.domain.entity.oauth.OAuth2Entity;
+import com.ballx.domain.entity.oauth.SocialProviderEntity;
 import com.ballx.domain.entity.user.MemberEntity;
 import com.ballx.exception.handler.BusinessException;
 import com.ballx.infra.oauth.OAuth2UserUnlinkManager;
@@ -38,18 +38,18 @@ public class OAuth2Service {
 
 	// 로그인 시도
 	public OAuth2StatusResponse checkOAuth2Status(
-		OAuth2Provider provider,
+		ProviderType provider,
 		String providerId,
 		String email
 	) {
 		// 해당 소셜 계정으로 가입된 OAuth2Entity 확인
-		Optional<OAuth2Entity> checkOAuth2Entity =
+		Optional<SocialProviderEntity> checkOAuth2Entity =
 			oAuth2Repository.findByProviderAndProviderId(provider, providerId);
 
 		if (checkOAuth2Entity.isPresent()) {
 			// 기존 회원 - 로그인 완료
-			OAuth2Entity oAuth2Entity = checkOAuth2Entity.get();
-			MemberEntity member = oAuth2Entity.getMember();
+			SocialProviderEntity socialProviderEntity = checkOAuth2Entity.get();
+			MemberEntity member = socialProviderEntity.getMember();
 
 			return OAuth2StatusResponse.login(
 				provider,
@@ -65,7 +65,7 @@ public class OAuth2Service {
 	@Transactional
 	public OAuth2TokenResponse signUp(
 		OAuth2SignUpRequest request,
-		OAuth2Provider provider,
+		ProviderType provider,
 		String providerId,
 		String email
 	) {
@@ -89,13 +89,13 @@ public class OAuth2Service {
 		memberRepository.save(member);
 
 		// 소셜 연동
-		OAuth2Entity oAuth2Entity = OAuth2Entity.create(
+		SocialProviderEntity socialProviderEntity = SocialProviderEntity.create(
 			member,
 			provider,
 			providerId,
 			email
 		);
-		oAuth2Repository.save(oAuth2Entity);
+		oAuth2Repository.save(socialProviderEntity);
 
 		// JWT 토큰 발급
 		String accessToken = jwtTokenProvider.create(
@@ -111,7 +111,7 @@ public class OAuth2Service {
 	@Transactional
 	public OAuth2LinkResponse linkAccount(
 		OAuth2LinkRequest request,
-		OAuth2Provider provider,
+		ProviderType provider,
 		String providerId,
 		String email
 	) {
@@ -125,28 +125,28 @@ public class OAuth2Service {
 		}
 
 		// 소셜 연동
-		OAuth2Entity oAuth2Entity = OAuth2Entity.create(
+		SocialProviderEntity socialProviderEntity = SocialProviderEntity.create(
 			member,
 			provider,
 			providerId,
 			email
 		);
-		oAuth2Repository.save(oAuth2Entity);
+		oAuth2Repository.save(socialProviderEntity);
 
 		return OAuth2LinkResponse.of(provider, email);
 	}
 
 	// 로그인
 	public OAuth2TokenResponse login(
-		OAuth2Provider provider,
+		ProviderType provider,
 		String providerId
 	) {
 		// 소셜로 멤버 확인
-		OAuth2Entity oAuth2Entity = oAuth2Repository
+		SocialProviderEntity socialProviderEntity = oAuth2Repository
 			.findByProviderAndProviderId(provider, providerId)
 			.orElseThrow(() -> new BusinessException("등록되지 않은 소셜 계정입니다."));
 
-		MemberEntity member = oAuth2Entity.getMember();
+		MemberEntity member = socialProviderEntity.getMember();
 
 		// JWT 토큰 발급
 		String accessToken = jwtTokenProvider.create(
@@ -167,7 +167,7 @@ public class OAuth2Service {
 	@Transactional
 	public void unlinkOAuth2Account(
 		UUID memberId,
-		OAuth2Provider provider,
+		ProviderType provider,
 		String providerId,
 		String accessToken
 	) {
@@ -176,12 +176,12 @@ public class OAuth2Service {
 			.orElseThrow(() -> new BusinessException("멤버를 찾을 수 없습니다."));
 
 		// 소셜 연동 조회
-		OAuth2Entity oAuth2Entity = oAuth2Repository
+		SocialProviderEntity socialProviderEntity = oAuth2Repository
 			.findByProviderAndProviderId(provider, providerId)
 			.orElseThrow(() -> new BusinessException("연동된 소셜 계정을 찾을 수 없습니다."));
 
 		// 본인 계정인지 확인
-		if (!oAuth2Entity.getMember().getId().equals(member.getId())) {
+		if (!socialProviderEntity.getMember().getId().equals(member.getId())) {
 			throw new BusinessException("본인 계정이 아닙니다.");
 		}
 
@@ -199,19 +199,19 @@ public class OAuth2Service {
 			log.error("연동 해제 실패 Provider: {}", e.getMessage());
 		}
 
-		oAuth2Repository.delete(oAuth2Entity);
+		oAuth2Repository.delete(socialProviderEntity);
 		log.info("연동 해제 완료 : Provider: {}, MemberId: {}", provider, memberId);
 	}
 
 	public List<OAuth2AccountResponse> getLinkedOAuth2Accounts(UUID memberId) {
 		MemberEntity member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException("멤버를 찾을 수 없습니다."));
-		List<OAuth2Entity> linkedAccounts = oAuth2Repository.findALlByMember(member);
+		List<SocialProviderEntity> linkedAccounts = oAuth2Repository.findALlByMember(member);
 
 		return linkedAccounts.stream().map(this::mapToOAuth2AccountResponse).collect(Collectors.toList());
 	}
 
-	private OAuth2AccountResponse mapToOAuth2AccountResponse(OAuth2Entity entity) {
+	private OAuth2AccountResponse mapToOAuth2AccountResponse(SocialProviderEntity entity) {
 		return new OAuth2AccountResponse(
 			entity.getProvider(),
 			entity.getEmail(),

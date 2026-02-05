@@ -2,11 +2,11 @@ package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 
 public interface OAuth2UserInfo {
 
-	OAuth2Provider getProvider();
+	ProviderType getProvider();
 
 	String getAccessToken();
 

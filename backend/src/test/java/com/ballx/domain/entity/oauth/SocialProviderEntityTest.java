@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.ballx.constants.Gender;
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 import com.ballx.domain.entity.user.MemberEntity;
 import com.ballx.exception.FieldValidationException;
 import com.ballx.repository.oauth.OAuth2Repository;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ActiveProfiles("test")
 @DataJpaTest
-class OAuth2EntityTest {
+class SocialProviderEntityTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
@@ -53,17 +53,17 @@ class OAuth2EntityTest {
 
 	@Test
 	void 생성_성공() {
-		OAuth2Entity oAuth2Entity = OAuth2Entity.create(
+		SocialProviderEntity socialProviderEntity = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.GOOGLE,
+			ProviderType.GOOGLE,
 			"google-12345",
 			"google@gmail.com"
 		);
 
-		OAuth2Entity savedOAuth2 = entityManager.persistAndFlush(oAuth2Entity);
+		SocialProviderEntity savedOAuth2 = entityManager.persistAndFlush(socialProviderEntity);
 
 		assertThat(savedOAuth2.getId()).isNotNull();
-		assertThat(savedOAuth2.getProvider()).isEqualTo(OAuth2Provider.GOOGLE);
+		assertThat(savedOAuth2.getProvider()).isEqualTo(ProviderType.GOOGLE);
 		assertThat(savedOAuth2.getProviderId()).isEqualTo("google-12345");
 		assertThat(savedOAuth2.getEmail()).isEqualTo("google@gmail.com");
 		assertThat(savedOAuth2.getCreatedAt()).isNotNull();
@@ -82,9 +82,9 @@ class OAuth2EntityTest {
 	@Test
 	void 생성_실패_멤버가_없거나_null() {
 		assertThatThrownBy(() -> {
-			OAuth2Entity.create(
+			SocialProviderEntity.create(
 				null,
-				OAuth2Provider.GOOGLE,
+				ProviderType.GOOGLE,
 				"google-12345",
 				"google@gmail.com"
 			);
@@ -99,7 +99,7 @@ class OAuth2EntityTest {
 	@Test
 	void 생성_실패_제공자가_없거나_null() {
 		assertThatThrownBy(() -> {
-			OAuth2Entity.create(
+			SocialProviderEntity.create(
 				member,
 				null,
 				"google-12345",
@@ -115,9 +115,9 @@ class OAuth2EntityTest {
 	@Test
 	void 생성_실패_제공자번호가_없거나_null() {
 		assertThatThrownBy(() -> {
-			OAuth2Entity.create(
+			SocialProviderEntity.create(
 				member,
-				OAuth2Provider.GOOGLE,
+				ProviderType.GOOGLE,
 				null,
 				"google@gmail.com"
 			);
@@ -131,9 +131,9 @@ class OAuth2EntityTest {
 	@Test
 	void 생성_실패_이메일이_없거나_null() {
 		assertThatThrownBy(() -> {
-			OAuth2Entity.create(
+			SocialProviderEntity.create(
 				member,
-				OAuth2Provider.GOOGLE,
+				ProviderType.GOOGLE,
 				"google-12345",
 				null
 			);
@@ -146,9 +146,9 @@ class OAuth2EntityTest {
 
 	@Test
 	void 관계_확인_성공() {
-		OAuth2Entity oauth2 = OAuth2Entity.create(
+		SocialProviderEntity oauth2 = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.KAKAO,
+			ProviderType.KAKAO,
 			"kakao-12345",
 			"kakao@kakao.com"
 		);
@@ -157,7 +157,7 @@ class OAuth2EntityTest {
 		UUID savedId = oauth2.getId();
 		entityManager.clear();
 
-		OAuth2Entity foundOAuth2 = entityManager.find(OAuth2Entity.class, savedId);
+		SocialProviderEntity foundOAuth2 = entityManager.find(SocialProviderEntity.class, savedId);
 
 		assertThat(foundOAuth2).isNotNull();
 		assertThat(foundOAuth2.getMember()).isNotNull();
@@ -180,9 +180,9 @@ class OAuth2EntityTest {
 		);
 		entityManager.persistAndFlush(member2);
 
-		OAuth2Entity oauth2 = OAuth2Entity.create(
+		SocialProviderEntity oauth2 = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.KAKAO,
+			ProviderType.KAKAO,
 			"kakao-12345",
 			"kakao@kakao.com"
 		);
@@ -192,7 +192,7 @@ class OAuth2EntityTest {
 
 		entityManager.clear();
 
-		OAuth2Entity foundOAuth2 = entityManager.find(OAuth2Entity.class, savedId);
+		SocialProviderEntity foundOAuth2 = entityManager.find(SocialProviderEntity.class, savedId);
 
 		assertThat(foundOAuth2).isNotNull();
 		assertThat(foundOAuth2.getMember()).isNotNull();
@@ -206,23 +206,23 @@ class OAuth2EntityTest {
 
 	@Test
 	void 다중_제공자_연결() {
-		OAuth2Entity googleOAuth = OAuth2Entity.create(
+		SocialProviderEntity googleOAuth = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.GOOGLE,
+			ProviderType.GOOGLE,
 			"google-12345",
 			"google@gmail.com"
 		);
 
-		OAuth2Entity kakaoOAuth = OAuth2Entity.create(
+		SocialProviderEntity kakaoOAuth = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.KAKAO,
+			ProviderType.KAKAO,
 			"kakao-12345",
 			"kakao@kakao.com"
 		);
 
-		OAuth2Entity naverOAuth = OAuth2Entity.create(
+		SocialProviderEntity naverOAuth = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.NAVER,
+			ProviderType.NAVER,
 			"naver-12345",
 			"naver@naver.com"
 		);
@@ -237,17 +237,17 @@ class OAuth2EntityTest {
 		log.info(" - naver ID: {}", naverOAuth.getId());
 
 		entityManager.clear();
-		OAuth2Entity foundGoogle = entityManager.find(OAuth2Entity.class, googleOAuth.getId());
-		OAuth2Entity foundKakao = entityManager.find(OAuth2Entity.class, kakaoOAuth.getId());
-		OAuth2Entity foundNaver = entityManager.find(OAuth2Entity.class, naverOAuth.getId());
+		SocialProviderEntity foundGoogle = entityManager.find(SocialProviderEntity.class, googleOAuth.getId());
+		SocialProviderEntity foundKakao = entityManager.find(SocialProviderEntity.class, kakaoOAuth.getId());
+		SocialProviderEntity foundNaver = entityManager.find(SocialProviderEntity.class, naverOAuth.getId());
 
-		assertThat(foundGoogle.getProvider()).isEqualTo(OAuth2Provider.GOOGLE);
+		assertThat(foundGoogle.getProvider()).isEqualTo(ProviderType.GOOGLE);
 		assertThat(foundGoogle.getEmail()).isEqualTo("google@gmail.com");
 
-		assertThat(foundKakao.getProvider()).isEqualTo(OAuth2Provider.KAKAO);
+		assertThat(foundKakao.getProvider()).isEqualTo(ProviderType.KAKAO);
 		assertThat(foundKakao.getEmail()).isEqualTo("kakao@kakao.com");
 
-		assertThat(foundNaver.getProvider()).isEqualTo(OAuth2Provider.NAVER);
+		assertThat(foundNaver.getProvider()).isEqualTo(ProviderType.NAVER);
 		assertThat(foundNaver.getEmail()).isEqualTo("naver@naver.com");
 
 		assertThat(foundGoogle.getMember().getId()).isEqualTo(member.getId());
@@ -262,9 +262,9 @@ class OAuth2EntityTest {
 
 	@Test
 	void 이미_연결한_제공자_연결_실패() {
-		OAuth2Entity googleOAuth = OAuth2Entity.create(
+		SocialProviderEntity googleOAuth = SocialProviderEntity.create(
 			member,
-			OAuth2Provider.GOOGLE,
+			ProviderType.GOOGLE,
 			"google-12345",
 			"google@gmail.com"
 		);
@@ -272,12 +272,12 @@ class OAuth2EntityTest {
 		entityManager.clear();
 
 		assertThatThrownBy(() -> {
-			if (oAuth2Repository.existsByMemberAndProvider(member, OAuth2Provider.GOOGLE)) {
+			if (oAuth2Repository.existsByMemberAndProvider(member, ProviderType.GOOGLE)) {
 				throw new RuntimeException("이미 연동 되어 있는 제공자입니다.");
 			}
-			OAuth2Entity googleOAuth2 = OAuth2Entity.create(
+			SocialProviderEntity googleOAuth2 = SocialProviderEntity.create(
 				member,
-				OAuth2Provider.GOOGLE,
+				ProviderType.GOOGLE,
 				"google-98765",
 				"gmail@gmail.com"
 			);

@@ -2,10 +2,10 @@ package com.ballx.domain.dto.response.oauth;
 
 import java.time.Instant;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 
 public record OAuth2AccountResponse(
-	OAuth2Provider provider,
+	ProviderType provider,
 	String email,
 	Instant linkedAt
 ) {

@@ -4,7 +4,7 @@ import static lombok.AccessLevel.*;
 
 import org.springframework.util.StringUtils;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 import com.ballx.domain.entity.base.ModificationTimestampEntity;
 import com.ballx.domain.entity.user.MemberEntity;
 import com.ballx.validation.Preconditions;
@@ -31,14 +31,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class OAuth2Entity extends ModificationTimestampEntity {
+public class SocialProviderEntity extends ModificationTimestampEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private MemberEntity member;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private OAuth2Provider provider;
+	private ProviderType provider;
 
 	@Column(nullable = false)
 	private String providerId;
@@ -46,19 +46,20 @@ public class OAuth2Entity extends ModificationTimestampEntity {
 	@Column(nullable = false)
 	private String email;
 
-	private OAuth2Entity(MemberEntity member, OAuth2Provider provider, String providerId, String email) {
+	private SocialProviderEntity(MemberEntity member, ProviderType provider, String providerId, String email) {
 		this.member = member;
 		this.provider = provider;
 		this.providerId = providerId;
 		this.email = email;
 	}
 
-	public static OAuth2Entity create(MemberEntity member, OAuth2Provider provider, String providerId, String email) {
+	public static SocialProviderEntity create(MemberEntity member, ProviderType provider, String providerId,
+		String email) {
 		validate(member, provider, providerId, email);
-		return new OAuth2Entity(member, provider, providerId, email);
+		return new SocialProviderEntity(member, provider, providerId, email);
 	}
 
-	private static void validate(MemberEntity member, OAuth2Provider provider, String providerId, String email) {
+	private static void validate(MemberEntity member, ProviderType provider, String providerId, String email) {
 		Preconditions.domainValidate(
 			member != null, "멤버는 비어 있을 수 없습니다."
 		);

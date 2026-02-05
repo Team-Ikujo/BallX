@@ -7,18 +7,18 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ballx.constants.OAuth2Provider;
-import com.ballx.domain.entity.oauth.OAuth2Entity;
+import com.ballx.constants.ProviderType;
+import com.ballx.domain.entity.oauth.SocialProviderEntity;
 import com.ballx.domain.entity.user.MemberEntity;
 
 @Repository
-public interface OAuth2Repository extends JpaRepository<OAuth2Entity, UUID> {
+public interface OAuth2Repository extends JpaRepository<SocialProviderEntity, UUID> {
 
-	boolean existsByMemberAndProvider(MemberEntity member, OAuth2Provider provider);
+	boolean existsByMemberAndProvider(MemberEntity member, ProviderType provider);
 
-	Optional<OAuth2Entity> findByProviderAndProviderId(OAuth2Provider provider, String providerId);
+	Optional<SocialProviderEntity> findByProviderAndProviderId(ProviderType provider, String providerId);
 
-	List<OAuth2Entity> findALlByMember(MemberEntity member);
+	List<SocialProviderEntity> findALlByMember(MemberEntity member);
 
 	long countByMember(MemberEntity member);
 }

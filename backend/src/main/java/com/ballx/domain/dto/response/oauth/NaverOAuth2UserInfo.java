@@ -2,7 +2,7 @@ package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
-import com.ballx.constants.OAuth2Provider;
+import com.ballx.constants.ProviderType;
 
 public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	private final Map<String, Object> attributes;
@@ -20,8 +20,8 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	}
 
 	@Override
-	public OAuth2Provider getProvider() {
-		return OAuth2Provider.NAVER;
+	public ProviderType getProvider() {
+		return ProviderType.NAVER;
 	}
 
 	@Override
