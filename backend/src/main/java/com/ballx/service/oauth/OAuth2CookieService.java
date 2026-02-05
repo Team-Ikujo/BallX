@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.ballx.constants.ProviderType;
 import com.ballx.domain.dto.response.oauth.OAuth2InfoResponse;
-import com.ballx.domain.dto.response.oauth.OAuth2UserInfo;
+import com.ballx.infra.oauth.response.SocialInfo;
 import com.ballx.utils.CookieUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class OAuth2CookieService {
 	private static final String OAUTH2_ACCESS_TOKEN_COOKIE = "oauth2_access_token";
 	private static final int COOKIE_EXPIRE_SECONDS = 300;
 
-	public void saveOAuth2InfoToCookie(HttpServletResponse response, OAuth2UserInfo userInfo) {
+	public void saveOAuth2InfoToCookie(HttpServletResponse response, SocialInfo userInfo) {
 		CookieUtils.addCookie(response, OAUTH2_PROVIDER_COOKIE,
 			userInfo.getProvider().name(), COOKIE_EXPIRE_SECONDS);
 		CookieUtils.addCookie(response, OAUTH2_PROVIDER_ID_COOKIE,

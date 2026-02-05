@@ -12,8 +12,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ballx.config.properties.OAuth2Properties;
 import com.ballx.constants.messages.ErrorCode;
-import com.ballx.domain.dto.response.oauth.OAuth2UserInfo;
 import com.ballx.exception.CustomException;
+import com.ballx.infra.oauth.response.SocialInfo;
 import com.ballx.security.OAuth2UserPrincipal;
 import com.ballx.utils.CookieUtils;
 
@@ -82,7 +82,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			return buildErrorUrl(targetUrl, "Authentication failed");
 		}
 
-		OAuth2UserInfo userInfo = principal.getUserInfo();
+		SocialInfo userInfo = principal.getUserInfo();
 
 		switch (mode.toLowerCase()) {
 			case "login":
@@ -98,7 +98,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private String handleLoginMode(
 		HttpServletResponse response,
 		String targetUrl,
-		OAuth2UserInfo userInfo
+		SocialInfo userInfo
 	) {
 		saveOAuth2InfoToCookie(response, userInfo);
 
@@ -116,7 +116,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private String handleUnlinkMode(
 		HttpServletResponse response,
 		String targetUrl,
-		OAuth2UserInfo userInfo
+		SocialInfo userInfo
 	) {
 		saveOAuth2InfoToCookie(response, userInfo);
 
@@ -128,7 +128,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		return targetUrl;
 	}
 
-	private void saveOAuth2InfoToCookie(HttpServletResponse response, OAuth2UserInfo userInfo) {
+	private void saveOAuth2InfoToCookie(HttpServletResponse response, SocialInfo userInfo) {
 		int maxAge = 300; // 5분
 
 		CookieUtils.addCookie(response, "oauth2_provider",

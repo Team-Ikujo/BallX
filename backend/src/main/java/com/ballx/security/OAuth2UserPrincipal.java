@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.ballx.domain.dto.response.oauth.OAuth2UserInfo;
+import com.ballx.infra.oauth.response.SocialInfo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OAuth2UserPrincipal implements OAuth2User {
 
-	private final OAuth2UserInfo userInfo;
+	private final SocialInfo userInfo;
 	private final Collection<? extends GrantedAuthority> authorities;
 
 	@Override

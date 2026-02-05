@@ -1,10 +1,10 @@
-package com.ballx.domain.dto.response.oauth;
+package com.ballx.infra.oauth.response;
 
 import java.util.Map;
 
 import com.ballx.constants.ProviderType;
 
-public interface OAuth2UserInfo {
+public interface SocialInfo {
 
 	ProviderType getProvider();
 

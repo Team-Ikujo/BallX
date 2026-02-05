@@ -1,17 +1,17 @@
-package com.ballx.domain.dto.response.oauth;
+package com.ballx.infra.oauth.response;
 
 import java.util.Map;
 
 import com.ballx.constants.ProviderType;
 
-public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
+public class KakaoSocialInfo implements SocialInfo {
 	private final String accessToken;
 	private final Map<String, Object> attributes;
 	private final String id;
 	private final String email;
 	private final String name;
 
-	public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+	public KakaoSocialInfo(String accessToken, Map<String, Object> attributes) {
 		this.accessToken = accessToken;
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 

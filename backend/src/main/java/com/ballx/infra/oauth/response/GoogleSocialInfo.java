@@ -1,27 +1,27 @@
-package com.ballx.domain.dto.response.oauth;
+package com.ballx.infra.oauth.response;
 
 import java.util.Map;
 
 import com.ballx.constants.ProviderType;
 
-public class NaverOAuth2UserInfo implements OAuth2UserInfo {
-	private final Map<String, Object> attributes;
+public class GoogleSocialInfo implements SocialInfo {
 	private final String accessToken;
+	private final Map<String, Object> attributes;
 	private final String id;
 	private final String email;
 	private final String name;
 
-	public NaverOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+	public GoogleSocialInfo(String accessToken, Map<String, Object> attributes) {
 		this.accessToken = accessToken;
-		this.attributes = (Map<String, Object>)attributes.get("response");
-		this.id = this.attributes.get("id").toString();
-		this.email = this.attributes.get("email").toString();
-		this.name = this.attributes.get("name").toString();
+		this.attributes = attributes;
+		this.id = attributes.get("sub").toString();
+		this.email = attributes.get("email").toString();
+		this.name = attributes.get("name") != null ? attributes.get("name").toString() : null;
 	}
 
 	@Override
 	public ProviderType getProvider() {
-		return ProviderType.NAVER;
+		return ProviderType.GOOGLE;
 	}
 
 	@Override
@@ -48,5 +48,4 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	public String getName() {
 		return name;
 	}
-
 }
