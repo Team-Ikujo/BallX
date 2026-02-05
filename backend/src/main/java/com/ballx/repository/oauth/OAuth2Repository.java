@@ -1,5 +1,6 @@
 package com.ballx.repository.oauth;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,8 @@ public interface OAuth2Repository extends JpaRepository<OAuth2Entity, UUID> {
 	boolean existsByMemberAndProvider(MemberEntity member, OAuth2Provider provider);
 
 	Optional<OAuth2Entity> findByProviderAndProviderId(OAuth2Provider provider, String providerId);
+
+	List<OAuth2Entity> findALlByMember(MemberEntity member);
+
+	long countByMember(MemberEntity member);
 }
