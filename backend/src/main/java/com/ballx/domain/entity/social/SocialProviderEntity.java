@@ -55,14 +55,11 @@ public class SocialProviderEntity extends ModificationTimestampEntity {
 
 	public static SocialProviderEntity create(MemberEntity member, ProviderType provider, String providerId,
 		String email) {
-		validate(member, provider, providerId, email);
+		validate(provider, providerId, email);
 		return new SocialProviderEntity(member, provider, providerId, email);
 	}
 
-	private static void validate(MemberEntity member, ProviderType provider, String providerId, String email) {
-		Preconditions.domainValidate(
-			member != null, "멤버는 비어 있을 수 없습니다."
-		);
+	private static void validate(ProviderType provider, String providerId, String email) {
 
 		Preconditions.domainValidate(
 			provider != null, "제공자는 비어 있을 수 없습니다."
