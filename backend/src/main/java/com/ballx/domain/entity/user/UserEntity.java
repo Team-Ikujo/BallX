@@ -52,7 +52,7 @@ public class UserEntity extends ModificationTimestampEntity {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private UserStatus status = UserStatus.ACTIVATED;
+	private UserStatus status;
 
 	protected UserEntity(
 		String name, String mobile, LocalDate birthDate, UserRole role, Gender gender
