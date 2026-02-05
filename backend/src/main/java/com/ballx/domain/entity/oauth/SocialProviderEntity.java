@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = "oauth2_entity",
+	name = "social_provider_entity",
 	uniqueConstraints = {
 		@UniqueConstraint(
 			name = "uk_member_provider",
