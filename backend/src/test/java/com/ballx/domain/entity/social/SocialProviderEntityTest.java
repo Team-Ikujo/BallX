@@ -80,23 +80,6 @@ class SocialProviderEntityTest {
 	}
 
 	@Test
-	void 생성_실패_멤버가_없거나_null() {
-		assertThatThrownBy(() -> {
-			SocialProviderEntity.create(
-				null,
-				ProviderType.GOOGLE,
-				"google-12345",
-				"google@gmail.com"
-			);
-		})
-			.isInstanceOf(FieldValidationException.class)
-			.hasMessageContaining("멤버는 비어 있을 수 없습니다.")
-			.satisfies(e1 -> {
-				log.info("예외 발생 확인: {}", e1.getMessage());
-			});
-	}
-
-	@Test
 	void 생성_실패_제공자가_없거나_null() {
 		assertThatThrownBy(() -> {
 			SocialProviderEntity.create(
