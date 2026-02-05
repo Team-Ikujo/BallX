@@ -1,12 +1,5 @@
 package com.ballx.config;
 
-import com.ballx.config.jwt.JwtAccessDeniedHandler;
-import com.ballx.config.jwt.JwtAuthenticationEntryPoint;
-import com.ballx.config.jwt.JwtAuthenticationFilter;
-import com.ballx.security.SecurityPath;
-
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +13,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ballx.config.jwt.JwtAccessDeniedHandler;
+import com.ballx.config.jwt.JwtAuthenticationEntryPoint;
+import com.ballx.config.jwt.JwtAuthenticationFilter;
+import com.ballx.security.SecurityPath;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +53,7 @@ public class SecurityConfig {
 			).authorizeHttpRequests(
 				auth -> auth
 					.requestMatchers(SecurityPath.PUBLIC).permitAll()
+					.anyRequest().authenticated() // public 외 경로는 인증 필요
 			).addFilterBefore(
 				jwtAuthenticationFilter,
 				UsernamePasswordAuthenticationFilter.class
