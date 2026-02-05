@@ -1,35 +1,27 @@
-package com.ballx.domain.entity.dto.response.oauth;
+package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
 import com.ballx.constants.OAuth2Provider;
 
-public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
+public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 	private final String accessToken;
 	private final Map<String, Object> attributes;
 	private final String id;
 	private final String email;
 	private final String name;
 
-	public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+	public GoogleOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
 		this.accessToken = accessToken;
-		// kakaoAccount 에 attributes Map이 할당되어 있음
-		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
-
-		this.attributes = (Map<String, Object>)kakaoAccount.get("profile");
-
-		this.id = ((Long)attributes.get("id")).toString();
+		this.attributes = attributes;
+		this.id = attributes.get("sub").toString();
 		this.email = attributes.get("email").toString();
-
-		this.name = null;
-
-		this.attributes.put("id", id);
-		this.attributes.put("email", this.email);
+		this.name = attributes.get("name") != null ? attributes.get("name").toString() : null;
 	}
 
 	@Override
 	public OAuth2Provider getProvider() {
-		return OAuth2Provider.KAKAO;
+		return OAuth2Provider.GOOGLE;
 	}
 
 	@Override
@@ -56,5 +48,4 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
 	public String getName() {
 		return name;
 	}
-
 }

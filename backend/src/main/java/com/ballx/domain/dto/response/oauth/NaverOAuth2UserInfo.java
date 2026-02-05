@@ -1,27 +1,27 @@
-package com.ballx.domain.entity.dto.response.oauth;
+package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
 import com.ballx.constants.OAuth2Provider;
 
-public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
-	private final String accessToken;
+public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 	private final Map<String, Object> attributes;
+	private final String accessToken;
 	private final String id;
 	private final String email;
 	private final String name;
 
-	public GoogleOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+	public NaverOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
 		this.accessToken = accessToken;
-		this.attributes = attributes;
-		this.id = attributes.get("sub").toString();
-		this.email = attributes.get("email").toString();
-		this.name = attributes.get("name") != null ? attributes.get("name").toString() : null;
+		this.attributes = (Map<String, Object>)attributes.get("response");
+		this.id = this.attributes.get("id").toString();
+		this.email = this.attributes.get("email").toString();
+		this.name = this.attributes.get("name").toString();
 	}
 
 	@Override
 	public OAuth2Provider getProvider() {
-		return OAuth2Provider.GOOGLE;
+		return OAuth2Provider.NAVER;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-	
+
 	@Override
 	public String getProviderId() {
 		return id;
@@ -48,4 +48,5 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 	public String getName() {
 		return name;
 	}
+
 }

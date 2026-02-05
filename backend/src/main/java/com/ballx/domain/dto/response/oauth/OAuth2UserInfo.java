@@ -1,4 +1,4 @@
-package com.ballx.domain.entity.dto.response.oauth;
+package com.ballx.domain.dto.response.oauth;
 
 import java.util.Map;
 
