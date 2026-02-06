@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # OTel Agent와 함께 백엔드 실행
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -25,7 +26,10 @@ if [ ! -f "$OTEL_AGENT" ]; then
 fi
 
 # 백엔드 JAR 찾기
-BACKEND_JAR=$(find "$BACKEND_DIR/build/libs" -name "*.jar" -not -name "*-plain.jar" 2>/dev/null | head -1)
+BACKEND_JAR=""
+if [ -d "$BACKEND_DIR/build/libs" ]; then
+    BACKEND_JAR=$(find "$BACKEND_DIR/build/libs" -name "*.jar" -not -name "*-plain.jar" | head -1)
+fi
 
 if [ -z "$BACKEND_JAR" ]; then
     echo "Backend JAR not found. Building..."

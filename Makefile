@@ -40,7 +40,7 @@ setup: ## .env 파일 생성 + 안내 (최초 1회)
 ##@ 개발환경
 
 .PHONY: up down restart logs logs-be ps status
-up: check-env ## 전체 실행 (Postgres + Redis + Backend)
+up: check-env check-secrets ## 전체 실행 (Postgres + Redis + Backend)
 	@$(COMPOSE_BE) up -d
 	@echo ""
 	@echo "  Backend:  http://localhost:8080"
@@ -63,7 +63,7 @@ logs-be: ## 백엔드 로그만
 	@$(COMPOSE_BE) logs -f backend
 
 ps: ## 실행중인 컨테이너 목록
-	@docker ps --filter "name=GoTi-" --filter "name=goti-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+	@docker ps --filter "name=BallX-" --filter "name=ballx-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 status: ## 전체 서비스 상태
 	@echo ""
@@ -90,7 +90,7 @@ db-down: ## DB + Redis 중지
 	@$(COMPOSE_BE) stop postgres redis
 	@$(COMPOSE_BE) rm -f postgres redis
 
-backend-only: check-env ## 백엔드만 재빌드 + 실행
+backend-only: check-env check-secrets ## 백엔드만 재빌드 + 실행
 	@$(COMPOSE_BE) up -d --build backend
 
 build: ## 백엔드 Docker 이미지 빌드
@@ -114,7 +114,7 @@ mon-down: ## 모니터링 스택 중지
 mon-logs: ## 모니터링 로그
 	@$(COMPOSE_MON) logs -f
 
-otel: check-env db ## OTel Agent와 함께 백엔드 실행 (IDE 없이)
+otel: check-env check-secrets db ## OTel Agent와 함께 백엔드 실행 (IDE 없이)
 	@echo "  모니터링 스택 + OTel 백엔드 시작..."
 	@$(COMPOSE_MON) up -d
 	@bash monitoring/run-backend-with-otel.sh
@@ -201,12 +201,22 @@ nuke: ## 전부 삭제 (DB 데이터 포함 - 주의!)
 	fi
 
 # ── 내부 타겟 ────────────────────────────────────────────
-.PHONY: check-env
+.PHONY: check-env check-secrets
 check-env:
 	@if [ ! -f backend/.env ]; then \
 		echo ""; \
 		echo "  .env 파일이 없습니다!"; \
 		echo "  먼저 make setup 을 실행하세요."; \
+		echo ""; \
+		exit 1; \
+	fi
+
+check-secrets:
+	@if grep -q "your-jwt-secret-key-base64-encoded" backend/.env 2>/dev/null; then \
+		echo ""; \
+		echo "  JWT_SECRET_KEY가 아직 기본값입니다!"; \
+		echo "  backend/.env 에서 값을 변경하세요."; \
+		echo "  생성: openssl rand -base64 64"; \
 		echo ""; \
 		exit 1; \
 	fi

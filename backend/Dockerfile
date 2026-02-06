@@ -14,6 +14,7 @@ COPY build.gradle settings.gradle ./
 RUN chmod +x gradlew
 
 # 의존성만 먼저 다운로드 (소스 변경 시에도 이 레이어는 캐시됨)
+# NOTE: src 없이 실행하므로 일부 태스크가 실패할 수 있어 || true 사용
 RUN ./gradlew dependencies --no-daemon || true
 
 # 소스 코드 복사 및 빌드
