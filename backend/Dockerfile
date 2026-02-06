@@ -1,7 +1,7 @@
 # ============================================
-# Stage 1: Build - 애플리케이션 빌드
+# Stage 1: Build - 애플리케이션 빌드 (glibc/Ubuntu)
 # ============================================
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:21-jdk-noble AS build
 
 WORKDIR /workspace
 
@@ -24,14 +24,14 @@ RUN ./gradlew clean build -x test --no-daemon
 RUN rm -f build/libs/*-plain.jar
 
 # ============================================
-# Stage 2: Runtime - 경량 런타임 이미지
+# Stage 2: Runtime - 경량 런타임 이미지 (Alpine)
 # ============================================
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# 보안: non-root 사용자로 실행
-RUN groupadd --system appgroup && useradd --system --gid appgroup appuser
+# 보안: non-root 사용자로 실행 (Alpine은 addgroup/adduser 사용)
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
 # 빌드 결과물 복사
 COPY --from=build /workspace/build/libs/*.jar app.jar
