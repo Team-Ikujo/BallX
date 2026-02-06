@@ -1,0 +1,37 @@
+# === 빌드 산출물 ===
+build/
+.gradle/
+bin/
+out/
+
+# === IDE 설정 ===
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# === 환경 변수 / 시크릿 ===
+.env
+.env.*
+!.env.example
+
+# === Git ===
+.git/
+.gitignore
+
+# === Docker (재귀 방지) ===
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# === OS 임시 파일 ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# === 로그 ===
+*.log
+logs/

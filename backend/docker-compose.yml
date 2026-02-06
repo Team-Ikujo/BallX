@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:17.6
     restart: always
-    container_name: BallX-postgres
+    container_name: GoTi-postgres
     ports:
       - "5432:5432"
     volumes:
@@ -12,13 +12,51 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ballx_local
+      POSTGRES_DB: goti_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-goti} -d goti_local"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis:
     image: redis:latest
-    container_name: BallX-redis
+    restart: always
+    container_name: GoTi-redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: GoTi-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      # Docker 내부 네트워크에서는 컨테이너명으로 접근
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/goti_local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # --- 모니터링 연동 (선택사항) ---
+  # monitoring 스택과 연동하려면 아래 네트워크 설정을 활성화하세요:
+  # backend:
+  #   networks:
+  #     - default
+  #     - monitoring_default
+  # networks:
+  #   monitoring_default:
+  #     external: true
 
 volumes:
   postgres_data:
