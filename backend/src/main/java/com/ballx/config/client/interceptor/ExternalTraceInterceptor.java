@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 public class ExternalTraceInterceptor implements ClientHttpRequestInterceptor {
-	private static final String TRACE_HEADER = "X-Request-Id";
+	private static final String TRACE_HEADER = "X-Trace-Id";
 
 	@Override
 	public ClientHttpResponse intercept(
