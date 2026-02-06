@@ -71,7 +71,9 @@ public abstract class BaseApiClient {
 	}
 
 	// --- POST ---
-	protected <T> T post(RestClient restClient, String path, Object body, Class<T> responseType) {
+	protected <T> T post(
+		RestClient restClient, String path, Object body, Class<T> responseType
+	) {
 		return restClient.post()
 			.uri(buildUri(path, null))
 			.contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +100,9 @@ public abstract class BaseApiClient {
 	}
 
 	// --- PUT ---
-	protected <T> T put(RestClient restClient, String path, Object body, Class<T> responseType) {
+	protected <T> T put(
+		RestClient restClient, String path, Object body, Class<T> responseType
+	) {
 		return restClient.put()
 			.uri(buildUri(path, null))
 			.contentType(MediaType.APPLICATION_JSON)
@@ -108,11 +112,43 @@ public abstract class BaseApiClient {
 			.body(responseType);
 	}
 
+	protected <T> T put(
+		RestClient restClient, String path,	HttpHeaders headers, Object body,	Class<T> responseType
+	) {
+		HttpHeaders merged = new HttpHeaders();
+		merged.addAll(defaultHeaders());
+		merged.addAll(headers);
+
+		return restClient.put()
+			.uri(buildUri(path, Map.of()))
+			.contentType(MediaType.APPLICATION_JSON)
+			.headers(h -> h.addAll(merged))
+			.body(body)
+			.retrieve()
+			.body(responseType);
+	}
+
 	// --- DELETE ---
-	protected <T> T delete(RestClient restClient, String path, Map<String, ?> query, Class<T> responseType) {
+	protected <T> T delete(
+		RestClient restClient, String path, Map<String, ?> query, Class<T> responseType
+	) {
 		return restClient.delete()
 			.uri(buildUri(path, query))
 			.headers(h -> h.addAll(defaultHeaders()))
+			.retrieve()
+			.body(responseType);
+	}
+
+	protected <T> T delete(
+		RestClient restClient, String path,	HttpHeaders headers, Map<String, ?> query, Class<T> responseType
+	) {
+		HttpHeaders merged = new HttpHeaders();
+		merged.addAll(defaultHeaders());
+		merged.addAll(headers);
+
+		return restClient.delete()
+			.uri(buildUri(path, query))
+			.headers(h -> h.addAll(merged))
 			.retrieve()
 			.body(responseType);
 	}
