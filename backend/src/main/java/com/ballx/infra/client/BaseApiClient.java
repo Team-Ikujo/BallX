@@ -33,10 +33,39 @@ public abstract class BaseApiClient {
 	}
 
 	// --- GET ---
-	protected <T> T get(RestClient restClient, String path, Map<String, ?> query, Class<T> responseType) {
+	protected <T> T get(
+		RestClient restClient, String path, Class<T> responseType
+	) {
+		return restClient.get()
+			.uri(buildUri(path, Map.of()))
+			.headers(h -> h.addAll(defaultHeaders()))
+			.retrieve()
+			.body(responseType);
+	}
+	protected <T> T get(
+		RestClient restClient, String path, HttpHeaders headers, Class<T> responseType
+	) {
+		HttpHeaders merged = new HttpHeaders();
+		merged.addAll(defaultHeaders());
+		merged.addAll(headers);
+
+		return restClient.get()
+			.uri(buildUri(path, Map.of()))
+			.headers(h -> h.addAll(merged))
+			.retrieve()
+			.body(responseType);
+	}
+
+	protected <T> T get(
+		RestClient restClient, String path,	HttpHeaders headers, Map<String, ?> query, Class<T> responseType
+	) {
+		HttpHeaders merged = new HttpHeaders();
+		merged.addAll(defaultHeaders());
+		merged.addAll(headers);
+
 		return restClient.get()
 			.uri(buildUri(path, query))
-			.headers(h -> h.addAll(defaultHeaders()))
+			.headers(h -> h.addAll(merged))
 			.retrieve()
 			.body(responseType);
 	}
