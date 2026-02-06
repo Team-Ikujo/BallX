@@ -1,13 +1,18 @@
 package com.ballx.config.client;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -21,26 +26,30 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @Slf4j
+@RequiredArgsConstructor
 public class RestClientConfig {
 
-	@Bean
-	public RestClient externalRestClient(
-		RestClientProperties props,
-		ExternalTraceInterceptor traceInterceptor,
-		ExternalLoggingInterceptor loggingInterceptor
-	) {
-		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-		factory.setConnectTimeout((int) props.connectTimeoutMs());
-		factory.setReadTimeout((int) props.readTimeoutMs());
+	private final RestClientProperties props;
+	private final ExternalTraceInterceptor traceInterceptor;
+	private final ExternalLoggingInterceptor loggingInterceptor;
 
-		return RestClient.builder()
-			.requestFactory(factory)
+	@Bean
+	public RestClient restClient(RestClient.Builder builder) {
+		HttpClient httpClient = HttpClient.newBuilder()
+			.connectTimeout(Duration.ofSeconds(props.connectTimeoutMs()))
+			.build();
+
+		JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
+		requestFactory.setReadTimeout(Duration.ofSeconds(props.readTimeoutMs()));
+
+		return builder
+			.requestFactory(requestFactory)
+			.requestInterceptor(traceInterceptor)
+			.requestInterceptor(loggingInterceptor)
 			.defaultStatusHandler(
 				HttpStatusCode::isError,
 				(request, response) -> handleError(request, response)
 			)
-			.requestInterceptor(traceInterceptor)
-			.requestInterceptor(loggingInterceptor)
 			.build();
 	}
 

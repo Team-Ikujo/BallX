@@ -67,5 +67,5 @@ oauth:
     # authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
 
 rest-client:
-  connect-timeout-ms: 2000
-  read-timeout-ms: 3000
+  connect-timeout-ms: 2
+  read-timeout-ms: 3
