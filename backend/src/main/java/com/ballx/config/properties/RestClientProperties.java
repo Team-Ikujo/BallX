@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "rest-client")
 public record RestClientProperties(
-	int connectTimeoutMs,
-	int readTimeoutMs
+	int connectTimeoutSeconds,
+	int readTimeoutSeconds
 ) {}

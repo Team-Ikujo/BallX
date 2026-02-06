@@ -35,11 +35,11 @@ public class RestClientConfig {
 	@Bean
 	public RestClient restClient(RestClient.Builder builder) {
 		HttpClient httpClient = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofSeconds(props.connectTimeoutMs()))
+			.connectTimeout(Duration.ofSeconds(props.connectTimeoutSeconds()))
 			.build();
 
 		JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
-		requestFactory.setReadTimeout(Duration.ofSeconds(props.readTimeoutMs()));
+		requestFactory.setReadTimeout(Duration.ofSeconds(props.readTimeoutSeconds()));
 
 		return builder
 			.requestFactory(requestFactory)
