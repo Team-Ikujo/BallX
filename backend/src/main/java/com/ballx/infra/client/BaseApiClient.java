@@ -9,11 +9,6 @@ import java.net.URI;
 import java.util.Map;
 
 public abstract class BaseApiClient {
-	protected final RestClient restClient;
-
-	protected BaseApiClient(RestClient restClient) {
-		this.restClient = restClient;
-	}
 
 	protected abstract String baseUrl();
 
@@ -37,7 +32,7 @@ public abstract class BaseApiClient {
 	}
 
 	// --- GET ---
-	protected <T> T get(String path, Map<String, ?> query, Class<T> responseType) {
+	protected <T> T get(RestClient restClient, String path, Map<String, ?> query, Class<T> responseType) {
 		return restClient.get()
 			.uri(buildUri(path, query))
 			.headers(h -> h.addAll(defaultHeaders()))
@@ -46,7 +41,7 @@ public abstract class BaseApiClient {
 	}
 
 	// --- POST ---
-	protected <T> T post(String path, Object body, Class<T> responseType) {
+	protected <T> T post(RestClient restClient, String path, Object body, Class<T> responseType) {
 		return restClient.post()
 			.uri(buildUri(path, null))
 			.contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +52,7 @@ public abstract class BaseApiClient {
 	}
 
 	// --- PUT ---
-	protected <T> T put(String path, Object body, Class<T> responseType) {
+	protected <T> T put(RestClient restClient, String path, Object body, Class<T> responseType) {
 		return restClient.put()
 			.uri(buildUri(path, null))
 			.contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +63,7 @@ public abstract class BaseApiClient {
 	}
 
 	// --- DELETE ---
-	protected <T> T delete(String path, Map<String, ?> query, Class<T> responseType) {
+	protected <T> T delete(RestClient restClient, String path, Map<String, ?> query, Class<T> responseType) {
 		return restClient.delete()
 			.uri(buildUri(path, query))
 			.headers(h -> h.addAll(defaultHeaders()))
