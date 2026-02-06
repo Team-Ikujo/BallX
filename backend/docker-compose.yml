@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ballx_local
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-goti} -d goti_local"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-goti} -d ballx_local"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -41,7 +41,7 @@ services:
       - .env
     environment:
       # Docker 내부 네트워크에서는 컨테이너명으로 접근
-      DATASOURCE_URL: jdbc:postgresql://postgres:5432/goti_local
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/ballx_local
     depends_on:
       postgres:
         condition: service_healthy
