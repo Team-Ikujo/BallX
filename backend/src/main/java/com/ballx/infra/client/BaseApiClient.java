@@ -14,6 +14,7 @@ public abstract class BaseApiClient {
 
 	protected HttpHeaders defaultHeaders() {
 		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
 		return headers;
 	}
