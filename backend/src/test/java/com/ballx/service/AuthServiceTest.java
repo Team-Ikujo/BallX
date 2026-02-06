@@ -28,7 +28,7 @@ public class AuthServiceTest {
 	final static String MOBILE = "01043053451";
 
 	@Test
-	@Disabled("비용 발생으로 테스트 시 Disabled 주석 처리 후 테스트 진행")
+	@Disabled("비용 발생으로(유료 SMS 비용) 테스트 시 Disabled 주석 처리 후 테스트 진행")
 	void 휴대폰_인증번호_전송_redis_저장() {
 		authService.sendAuthCode(MOBILE);
 		String authCode = redisCache.get(RedisKey.AUTH_CODE.getKey(MOBILE), String.class);

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class AuthSendAuthCodeTest {
 	final static String MOBILE = "01043053451";
 
 	@Test
+	@Disabled("비용 발생으로(유료 SMS 비용) 테스트 시 Disabled 주석 처리 후 테스트 진행")
 	void 인증번호_발송_성공_200_OK() throws Exception {
 		AuthCodeRequest request = new AuthCodeRequest(MOBILE);
 
