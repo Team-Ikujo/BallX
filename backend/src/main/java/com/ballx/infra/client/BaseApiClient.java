@@ -81,6 +81,22 @@ public abstract class BaseApiClient {
 			.body(responseType);
 	}
 
+	protected <T> T post(
+		RestClient restClient, String path, HttpHeaders headers, Object body,	Class<T> responseType
+	) {
+		HttpHeaders merged = new HttpHeaders();
+		merged.addAll(defaultHeaders());
+		merged.addAll(headers);
+
+		return restClient.post()
+			.uri(buildUri(path, Map.of()))
+			.contentType(MediaType.APPLICATION_JSON)
+			.headers(h -> h.addAll(merged))
+			.body(body)
+			.retrieve()
+			.body(responseType);
+	}
+
 	// --- PUT ---
 	protected <T> T put(RestClient restClient, String path, Object body, Class<T> responseType) {
 		return restClient.put()
