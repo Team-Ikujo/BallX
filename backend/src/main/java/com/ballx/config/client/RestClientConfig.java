@@ -1,6 +1,5 @@
 package com.ballx.config.client;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
@@ -18,16 +17,6 @@ public class RestClientConfig {
 	@Bean
 	public ExternalErrorHandler externalErrorHandler() {
 		return new ExternalErrorHandler();
-	}
-
-	@Bean
-	public ExternalTraceInterceptor externalTraceInterceptor() {
-		return new ExternalTraceInterceptor();
-	}
-
-	@Bean
-	public ExternalLoggingInterceptor externalLoggingInterceptor() {
-		return new ExternalLoggingInterceptor();
 	}
 
 	@Bean
