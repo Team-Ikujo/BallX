@@ -1,3 +1,12 @@
+/**
+ * .github/scripts/gemini_fe_pr_review_safe.js
+ *
+ * Fix: 모델 하드코딩(candidates) 제거
+ *  - v1beta /models 리스트를 먼저 호출(ListModels)
+ *  - supportedGenerationMethods에 generateContent가 있는 모델을 골라 호출
+ *  - models/gemini-1.5-xxx not found 404를 방지
+ */
+
 const axios = require("axios");
 
 const { GEMINI_API_KEY, GITHUB_TOKEN, PR_TITLE, PR_NUMBER, REPO } = process.env;
@@ -27,7 +36,10 @@ function maskSecrets(text) {
 
     const patterns = [
         // Private key blocks
-        [/-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, "[REDACTED_PRIVATE_KEY]"],
+        [
+            /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
+            "[REDACTED_PRIVATE_KEY]",
+        ],
         // AWS Access Key ID (AKIA...)
         [/\bAKIA[0-9A-Z]{16}\b/g, "[REDACTED_AWS_ACCESS_KEY]"],
         // Generic "api_key", "token", "secret" assignments (very common)
@@ -92,7 +104,6 @@ You are an expert in:
 Project rules:
 
 Folder structure (FSD):
-
 - app: app bootstrapping/composition
 - pages: route-level screens
 - widgets: large UI blocks
@@ -101,7 +112,6 @@ Folder structure (FSD):
 - shared: cross-cutting utilities/components
 
 Development principles:
-
 - Write maintainable and performant code.
 - Consider accessibility (a11y) by default.
 - Prefer simple state management.
@@ -117,7 +127,6 @@ Development principles:
 - Follow design system in src/styles/globals.css.
 
 When reviewing:
-
 - Focus ONLY on frontend code.
 - Evaluate structure, readability, performance, and maintainability.
 - Point out violations of FSD structure.
@@ -131,7 +140,6 @@ Important:
 - Do not repeat the diff.
 
 Output format (in Korean):
-
 1. 요약 (핵심 변경 사항 요약)
 2. 주요 개선 포인트 (중요도 높은 문제 위주)
 3. 구조/아키텍처 관점 피드백
@@ -141,15 +149,43 @@ Output format (in Korean):
 `;
 }
 
-async function callGemini(prompt, diffText) {
-    const base = "https://generativelanguage.googleapis.com/v1beta";
-    const candidates = [
-        "models/gemini-1.5-pro:generateContent",
-        "models/gemini-1.5-pro-latest:generateContent",
-        "models/gemini-1.5-flash:generateContent",
-        "models/gemini-1.5-flash-latest:generateContent",
-    ];
+/**
+ * ✅ NEW: v1beta ListModels 호출
+ * - 사용 가능한 모델과 지원 메서드(예: generateContent)를 확인
+ */
+async function listGeminiModels() {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`;
+    const res = await axios.get(url, { headers: { Accept: "application/json" } });
+    return res.data?.models ?? [];
+}
 
+/**
+ * ✅ NEW: generateContent 지원 모델 선택
+ * - 최신 계열을 선호하되, 실제로 지원하는 것만 고름
+ */
+function pickModelForGenerateContent(models) {
+    const usable = (models || []).filter(
+        (m) =>
+            Array.isArray(m.supportedGenerationMethods) &&
+            m.supportedGenerationMethods.includes("generateContent") &&
+            typeof m.name === "string"
+    );
+
+    if (usable.length === 0) return null;
+
+    // 선호 baseModelId (환경에 따라 다를 수 있어도, 지원하는 것만 pick됨)
+    const preferredBaseIds = ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-1.5-flash"];
+
+    for (const base of preferredBaseIds) {
+        const found = usable.find((m) => m.baseModelId === base);
+        if (found) return found.name; // ex) "models/gemini-2.0-flash"
+    }
+
+    // 그래도 없으면 첫 번째 사용 가능 모델
+    return usable[0].name;
+}
+
+async function callGemini(prompt, diffText) {
     const body = {
         contents: [
             {
@@ -160,30 +196,32 @@ async function callGemini(prompt, diffText) {
         generationConfig: { temperature: 0.2, topP: 0.9, maxOutputTokens: 1200 },
     };
 
-    let lastErr;
+    // ✅ 여기서 모델을 “실제 사용 가능한 것”으로 선택
+    const models = await listGeminiModels();
+    const modelName = pickModelForGenerateContent(models);
 
-    for (const path of candidates) {
-        const url = `${base}/${path}?key=${GEMINI_API_KEY}`;
-        try {
-            const res = await axios.post(url, body, { headers: { "Content-Type": "application/json" } });
-
-            const text =
-                res.data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ||
-                "No response from Gemini.";
-
-            return text;
-        } catch (err) {
-            lastErr = err;
-
-            // ✅ 디버깅을 위해 404/403의 응답 바디를 로그로 남김
-            const status = err?.response?.status;
-            const data = err?.response?.data;
-            console.log(`Gemini call failed for ${path} status=${status}`);
-            if (data) console.log("Gemini error body:", JSON.stringify(data).slice(0, 2000));
-        }
+    if (!modelName) {
+        const debug = JSON.stringify(models?.slice?.(0, 3) ?? [], null, 2);
+        throw new Error(`No Gemini models support generateContent. models(sample)=${debug}`);
     }
 
-    throw lastErr;
+    const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
+
+    try {
+        const res = await axios.post(url, body, { headers: { "Content-Type": "application/json" } });
+
+        const text =
+            res.data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ||
+            "No response from Gemini.";
+
+        return text;
+    } catch (err) {
+        const status = err?.response?.status;
+        const data = err?.response?.data;
+        console.log(`Gemini call failed for ${modelName}:generateContent status=${status}`);
+        if (data) console.log("Gemini error body:", JSON.stringify(data).slice(0, 2000));
+        throw err;
+    }
 }
 
 async function listIssueComments() {
@@ -275,14 +313,11 @@ function buildCommentBody(reviewMarkdown, meta) {
         results.push(review);
     }
 
-    // 여러 chunk 결과를 합쳐서 “최종 요약”을 한 번 더 받고 싶으면 추가 호출 가능(옵션)
-    // 여기선 비용 줄이려고 합치기만 함.
+    // 여러 chunk 결과를 합치기
     const combinedReview =
         results.length === 1
             ? results[0]
-            : results
-                .map((r, idx) => `### Part ${idx + 1}\n\n${r}`)
-                .join("\n\n");
+            : results.map((r, idx) => `### Part ${idx + 1}\n\n${r}`).join("\n\n");
 
     const body = buildCommentBody(combinedReview, {
         chunksUsed: usedChunks.length,
@@ -300,4 +335,7 @@ function buildCommentBody(reviewMarkdown, meta) {
         await createIssueComment(body);
         console.log("✅ Created Gemini FE review comment.");
     }
-})();
+})().catch((e) => {
+    console.error("❌ Gemini FE review action failed:", e?.message ?? e);
+    process.exit(1);
+});
