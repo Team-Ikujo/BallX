@@ -193,7 +193,7 @@ async function callGemini(prompt, diffText) {
                 parts: [{ text: `PR Title: ${PR_TITLE}\n\n${prompt}\n\nPR diff (frontend only):\n${diffText}` }],
             },
         ],
-        generationConfig: { temperature: 0.2, topP: 0.9, maxOutputTokens: 1200 },
+        generationConfig: { temperature: 0.2, topP: 0.9, maxOutputTokens: 6000 },
     };
 
     // ✅ 여기서 모델을 “실제 사용 가능한 것”으로 선택
