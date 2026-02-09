@@ -103,7 +103,7 @@ public abstract class BaseApiClient {
 		Object body,
 		Class<T> responseType
 	) {
-		return put(restClient, url, null, body, responseType);
+		return put(restClient, url, null, null, body, responseType);
 	}
 
 	protected <T> T put(
@@ -113,8 +113,19 @@ public abstract class BaseApiClient {
 		Object body,
 		Class<T> responseType
 	) {
+		return put(restClient, url, headers, null, body, responseType);
+	}
+
+	protected <T> T put(
+		RestClient restClient,
+		String url,
+		Map<String, String> headers,
+		Map<String, ?> query,
+		Object body,
+		Class<T> responseType
+	) {
 		return restClient.put()
-			.uri(url)
+			.uri(buildUri(url, query))
 			.headers(header -> {
 				header.addAll(defaultHeaders());
 				if (headers != null)
