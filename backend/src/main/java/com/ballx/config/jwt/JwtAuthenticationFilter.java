@@ -38,13 +38,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String requestURI = request.getRequestURI();
 
-		boolean isPublicPath = Arrays.stream(SecurityPath.PUBLIC)
+		boolean isPublic = Arrays.stream(SecurityPath.PUBLIC)
 			.anyMatch(pattern -> matches(pattern, requestURI));
 
-		if (isPublicPath) {
+		if (isPublic) {
 			filterChain.doFilter(request, response);
 			return;
 		}
+
 		String token = jwtTokenProvider.resolve(request);
 
 		try {
