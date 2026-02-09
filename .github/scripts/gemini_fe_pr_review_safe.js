@@ -142,8 +142,13 @@ Output format (in Korean):
 }
 
 async function callGemini(prompt, diffText) {
-    const endpoint =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent";
+    const base = "https://generativelanguage.googleapis.com/v1beta";
+    const candidates = [
+        "models/gemini-1.5-pro:generateContent",
+        "models/gemini-1.5-pro-latest:generateContent",
+        "models/gemini-1.5-flash:generateContent",
+        "models/gemini-1.5-flash-latest:generateContent",
+    ];
 
     const body = {
         contents: [
@@ -155,14 +160,30 @@ async function callGemini(prompt, diffText) {
         generationConfig: { temperature: 0.2, topP: 0.9, maxOutputTokens: 1200 },
     };
 
-    const res = await axios.post(`${endpoint}?key=${GEMINI_API_KEY}`, body, {
-        headers: { "Content-Type": "application/json" },
-    });
+    let lastErr;
 
-    return (
-        res.data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ||
-        "No response from Gemini."
-    );
+    for (const path of candidates) {
+        const url = `${base}/${path}?key=${GEMINI_API_KEY}`;
+        try {
+            const res = await axios.post(url, body, { headers: { "Content-Type": "application/json" } });
+
+            const text =
+                res.data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ||
+                "No response from Gemini.";
+
+            return text;
+        } catch (err) {
+            lastErr = err;
+
+            // ✅ 디버깅을 위해 404/403의 응답 바디를 로그로 남김
+            const status = err?.response?.status;
+            const data = err?.response?.data;
+            console.log(`Gemini call failed for ${path} status=${status}`);
+            if (data) console.log("Gemini error body:", JSON.stringify(data).slice(0, 2000));
+        }
+    }
+
+    throw lastErr;
 }
 
 async function listIssueComments() {
