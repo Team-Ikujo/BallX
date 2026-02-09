@@ -1,0 +1,65 @@
+name: Gemini FE PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  gemini_fe_review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check changed paths (frontend only)
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - '!frontend/**/*.md'
+              - '!frontend/**/dist/**'
+      - name: Decide to run
+        id: decide
+        run: |
+          echo "frontend_changed=${{ steps.filter.outputs.frontend }}" >> $GITHUB_OUTPUT
+          if [[ "${{ steps.filter.outputs.frontend }}" != "true" ]]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [[ "${{ github.event.pull_request.title }}" != *"[FE]"* ]]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "run=true" >> $GITHUB_OUTPUT
+
+      - name: Skip
+        if: steps.decide.outputs.run != 'true'
+        run: echo "Skip Gemini review (not frontend changes or missing [FE] in title)."
+
+      - name: Checkout
+        if: steps.decide.outputs.run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        if: steps.decide.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        if: steps.decide.outputs.run == 'true'
+        run: npm i axios
+
+      - name: Run Gemini review (frontend only + safety guards)
+        if: steps.decide.outputs.run == 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: node .github/scripts/gemini_fe_pr_review_safe.js
