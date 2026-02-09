@@ -22,7 +22,7 @@ public enum ErrorCode {
 	AUTH_REFRESH_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다. 재로그인이 필요합니다."),
 
 	// 소셜로그인
-	SOCIAL_PROVIDER_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 제공자입니다."),
+	SOCIAL_NOT_FOUND(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
 	SOCIAL_TOKEN_FAIL(HttpStatus.BAD_REQUEST, "액세스 토큰 요청에 실패했습니다."),
 
 	// 타입 관련 Error
