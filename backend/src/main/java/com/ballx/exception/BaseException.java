@@ -18,6 +18,11 @@ public abstract class BaseException extends NestedRuntimeException {
 		this.error = error;
 	}
 
+	protected BaseException(ErrorCode error, String message) {
+		super(message);
+		this.error = error;
+	}
+
 	protected BaseException(ErrorCode error, Throwable cause) {
 		super(error.getMessage(), cause);
 		this.error = error;

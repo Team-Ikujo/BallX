@@ -8,6 +8,10 @@ public class CustomException extends BaseException {
 		super(error);
 	}
 
+	public CustomException(ErrorCode error, String message) {
+		super(error, error.format(message));
+	}
+
 	public CustomException(ErrorCode error, Throwable cause) {
 		super(error, cause);
 	}
