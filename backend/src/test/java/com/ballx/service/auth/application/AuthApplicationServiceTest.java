@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +33,8 @@ public class AuthApplicationServiceTest {
 	@Autowired
 	RedisCache redisCache;
 
+	static final String KEY_SEPARATOR = ":";
+
 	@Test
 	@DisplayName("method : issueState()")
 	void state_생성_성공() {
@@ -42,8 +43,8 @@ public class AuthApplicationServiceTest {
 		assertNotNull(response);
 		String state = response.state();
 		log.info("state :: {}", response.state());
-
-		boolean isExists = redisCache.get(RedisKey.OAUTH_STATE.getKey(state), Boolean.class);
+		String keyParam = provider + KEY_SEPARATOR + state;
+		boolean isExists = redisCache.get(RedisKey.OAUTH_STATE.getKey(keyParam), Boolean.class);
 		assertTrue(isExists);
 		log.info("isExists :: {}", isExists);
 	}
@@ -51,7 +52,7 @@ public class AuthApplicationServiceTest {
 	@Test
 	@DisplayName("method : issueState()")
 	void state_생성_실패_kakao() {
-		ProviderType provider = ProviderType.NAVER;
+		ProviderType provider = ProviderType.KAKAO;
 		assertThatThrownBy(
 			() -> authApplicationService.issueState(provider)
 		).isInstanceOf(CustomException.class)
@@ -74,7 +75,7 @@ public class AuthApplicationServiceTest {
 	void 엑세스토큰_생성_실패_state_필수_소셜로그_redis_state_미존재() {
 		ProviderType provider = ProviderType.NAVER; // (or GOOGLE)
 		String code = "testCode";
-		String state = "testState";
+		String state = "NOT_EXISTS_STATE";
 		assertThatThrownBy(
 			() -> authApplicationService.login(provider, code, state)
 		).isInstanceOf(CustomException.class)
