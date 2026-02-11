@@ -1,8 +1,7 @@
-package com.ballx.service;
+package com.ballx.service.auth;
 
 import com.ballx.constants.redis.RedisKey;
 import com.ballx.infra.cache.RedisCache;
-import com.ballx.service.auth.AuthService;
 
 import lombok.extern.slf4j.Slf4j;
 
