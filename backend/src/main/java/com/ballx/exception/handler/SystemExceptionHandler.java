@@ -8,11 +8,14 @@ import com.ballx.exception.FieldValidationException;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class SystemExceptionHandler extends BaseExceptionHandler {
 
@@ -23,9 +26,9 @@ public class SystemExceptionHandler extends BaseExceptionHandler {
 	public ResponseEntity<ApiErrorResponse> handleCustomException(CustomException ex) {
 		ErrorCode error = ex.error();
 		if (error.isSystemError()) {
-			log.error("[System Error] code={} message={}", error.name(), error.getMessage(), ex);
+			log.error("[System Error] code={} message={}", error.name(), ex.getMessage(), ex);
 		} else {
-			log.warn("[Business Error] code={} message={}", error.name(), error.getMessage());
+			log.warn("[Business Error] code={} message={}", error.name(), ex.getMessage(), ex);
 		}
 		return toResponse(ex);
 	}
