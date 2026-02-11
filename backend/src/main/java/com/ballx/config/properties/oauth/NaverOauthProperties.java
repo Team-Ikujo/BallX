@@ -1,9 +1,9 @@
-package com.ballx.config.properties.social;
+package com.ballx.config.properties.oauth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "oauth.naver")
-public record NaverSocialProperties(
+public record NaverOauthProperties(
 	String clientId,
 	String clientSecret,
 	String redirectUri,

@@ -19,7 +19,7 @@ public abstract class BaseException extends NestedRuntimeException {
 	}
 
 	protected BaseException(ErrorCode error, String message) {
-		super(message);
+		super(error.format(message));
 		this.error = error;
 	}
 

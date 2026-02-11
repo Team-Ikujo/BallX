@@ -1,4 +1,6 @@
-package com.ballx.infra.client;
+package com.ballx.infra.client.base;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,7 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public abstract class BaseApiClient {
+
+	private final RestClient restClient;
 
 	protected HttpHeaders defaultHeaders() {
 		HttpHeaders headers = new HttpHeaders();
@@ -32,25 +37,22 @@ public abstract class BaseApiClient {
 		return builder.build(true).toUri();
 	}
 
-	protected <T> T get(
-		RestClient restClient,
+	public <T> T get(
 		String url,
 		Class<T> responseType
 	) {
-		return get(restClient, url, null, null, responseType);
+		return get(url, null, null, responseType);
 	}
 
 	protected <T> T get(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Class<T> responseType
 	) {
-		return get(restClient, url, headers, null, responseType);
+		return get(url, headers, null, responseType);
 	}
 
 	protected <T> T get(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Map<String, ?> query,
@@ -68,25 +70,34 @@ public abstract class BaseApiClient {
 	}
 
 	protected <T> T post(
-		RestClient restClient,
 		String uri,
 		Object body,
 		Class<T> responseType
 	) {
-		return post(restClient, uri, null, body, responseType);
+		return post(uri, null, body, null, responseType);
 	}
 
 	protected <T> T post(
-		RestClient restClient,
+		String uri,
+		Object body,
+		MediaType contentType,
+		Class<T> responseType
+	) {
+		return post(uri, null, body, contentType, responseType);
+	}
+
+	protected <T> T post(
 		String uri,
 		Map<String, String> headers,
 		Object body,
+		MediaType contentType,
 		Class<T> responseType
 	) {
-
 		return restClient.post()
 			.uri(buildUri(uri, Map.of()))
-			.contentType(MediaType.APPLICATION_JSON)
+			.contentType(
+				contentType == null ? MediaType.APPLICATION_JSON : contentType
+			)
 			.headers(header -> {
 				header.addAll(defaultHeaders());
 				if (headers != null)
@@ -98,26 +109,23 @@ public abstract class BaseApiClient {
 	}
 
 	protected <T> T put(
-		RestClient restClient,
 		String url,
 		Object body,
 		Class<T> responseType
 	) {
-		return put(restClient, url, null, null, body, responseType);
+		return put(url, null, null, body, responseType);
 	}
 
 	protected <T> T put(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Object body,
 		Class<T> responseType
 	) {
-		return put(restClient, url, headers, null, body, responseType);
+		return put(url, headers, null, body, responseType);
 	}
 
 	protected <T> T put(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Map<String, ?> query,
@@ -136,25 +144,19 @@ public abstract class BaseApiClient {
 			.body(responseType);
 	}
 
-	protected <T> T delete(
-		RestClient restClient,
-		String url,
-		Class<T> responseType
-	) {
-		return delete(restClient, url, null, null, responseType);
+	protected <T> T delete(String url, Class<T> responseType) {
+		return delete(url, null, null, responseType);
 	}
 
 	protected <T> T delete(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Class<T> responseType
 	) {
-		return delete(restClient, url, headers, null, responseType);
+		return delete(url, headers, null, responseType);
 	}
 
 	protected <T> T delete(
-		RestClient restClient,
 		String url,
 		Map<String, String> headers,
 		Map<String, ?> query,
