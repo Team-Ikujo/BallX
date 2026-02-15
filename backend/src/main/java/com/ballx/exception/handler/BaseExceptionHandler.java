@@ -15,7 +15,7 @@ public class BaseExceptionHandler {
 
 	public ResponseEntity<ApiErrorResponse> toResponse(BaseException ex) {
 		HttpStatus status = ex.error().getStatus();
-		String message = ex.error().getMessage();
+		String message = ex.getMessage();
 		return toResponse(status, message);
 	}
 

@@ -32,8 +32,9 @@ public class RedisCache {
 		return value != null ? clazz.cast(value) : null;
 	}
 
-	public void delete(String key) {
-		redisTemplate.delete(key);
+	public boolean consume(String key) {
+		Boolean deleted = redisTemplate.delete(key);
+		return Boolean.TRUE.equals(deleted);
 	}
 
 	public boolean hasKey(String key) {

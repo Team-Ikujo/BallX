@@ -1,5 +1,14 @@
 package com.ballx.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import com.ballx.constants.Gender;
 import com.ballx.domain.entity.user.MemberEntity;
 import com.ballx.domain.entity.user.UserEntity;
@@ -7,13 +16,6 @@ import com.ballx.repository.user.MemberRepository;
 import com.ballx.repository.user.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @DataJpaTest
@@ -32,7 +34,8 @@ public class UserRepositoryTest {
 		member = MemberEntity.create(
 			"테스트회원",
 			"01012341234",
-			Gender.MALE
+			Gender.MALE,
+			LocalDate.of(2026, 2, 4)
 		);
 		memberRepository.save(member);
 	}

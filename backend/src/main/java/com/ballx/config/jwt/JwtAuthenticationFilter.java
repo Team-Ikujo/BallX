@@ -1,5 +1,14 @@
 package com.ballx.config.jwt;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import com.ballx.constants.messages.ErrorCode;
 import com.ballx.exception.CustomException;
 import com.ballx.security.SecurityPath;
@@ -14,15 +23,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -36,11 +36,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
 
-		boolean requiredPermission = Arrays.stream(SecurityPath.PUBLIC)
-			.noneMatch(it -> matches(it, request.getRequestURI()));
+		String requestURI = request.getRequestURI();
+
+		boolean isPublic = Arrays.stream(SecurityPath.PUBLIC)
+			.anyMatch(pattern -> matches(pattern, requestURI));
+
+		if (isPublic) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		String token = jwtTokenProvider.resolve(request);
+
 		try {
-			if (requiredPermission && token != null) {
+			if (token != null && !token.isEmpty()) {
 				jwtTokenProvider.validateToken(token);
 				Authentication authenticationToken = jwtTokenProvider.getAuthentication(token);
 				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -63,5 +72,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		request.setAttribute("exception", exception);
 		throw exception;
 	}
-
 }

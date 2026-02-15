@@ -8,7 +8,8 @@ import java.time.Duration;
 @Getter
 @RequiredArgsConstructor
 public enum RedisKey {
-	AUTH_CODE("auth:code:", Duration.ofMinutes(3));
+	AUTH_CODE("auth:code:", Duration.ofMinutes(3)),
+	OAUTH_STATE("oauth:state:", Duration.ofMinutes(5));
 
 	private final String prefix;
 

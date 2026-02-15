@@ -5,6 +5,8 @@ import com.ballx.constants.messages.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.util.Objects;
 
 @Slf4j
+@Order(Ordered.LOWEST_PRECEDENCE)
 @RestControllerAdvice
 public class SpringExceptionHandler extends BaseExceptionHandler {
 
@@ -32,7 +35,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 		String field = Objects.requireNonNull(fieldError).getField();
 		String message = fieldError.getDefaultMessage();
 
-		log.warn("[Validation Failed] field={} message={}", field, message);
+		log.warn("[Validation Failed] field={} message={}", field, message, ex);
 		return toResponse(ErrorCode.BODY_FIELD_ERROR, message);
 	}
 
@@ -45,7 +48,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 		String field = Objects.requireNonNull(fieldError).getField();
 		String message = fieldError.getDefaultMessage();
 
-		log.warn("[Binding Failed] field={} message={}", field, message);
+		log.warn("[Binding Failed] field={} message={}", field, message, ex);
 		return toResponse(ErrorCode.INVALID_FORMAT, field);
 	}
 
@@ -61,7 +64,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 			ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown";
 		String value = ex.getValue() != null ? ex.getValue().toString() : "null";
 
-		log.warn("[Type Mismatch] param={} value={} requiredType={}", paramName, value, requiredType);
+		log.warn("[Type Mismatch] param={} value={} requiredType={}", paramName, value, requiredType, ex);
 		return toResponse(ErrorCode.TYPE_MISMATCH, paramName);
 	}
 
@@ -74,7 +77,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 	) {
 		String paramName = ex.getParameterName();
 
-		log.warn("[Missing Parameter] param={}", paramName);
+		log.warn("[Missing Parameter] param={}", paramName, ex);
 		return toResponse(ErrorCode.MISSING_PARAMETER, paramName);
 	}
 
@@ -85,7 +88,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 	public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(
 		HttpMessageNotReadableException ex
 	) {
-		log.warn("[JSON Parse Failed] message={}", ex.getMessage());
+		log.warn("[JSON Parse Failed] message={}", ex.getMessage(), ex);
 		return toResponse(ErrorCode.BAD_REQUEST);
 	}
 
@@ -98,7 +101,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 	) {
 		String method = ex.getMethod();
 
-		log.warn("[Method Not Supported] method={}", method);
+		log.warn("[Method Not Supported] method={}", method, ex);
 		return toResponse(ErrorCode.BAD_REQUEST);
 	}
 
@@ -109,7 +112,7 @@ public class SpringExceptionHandler extends BaseExceptionHandler {
 	public ResponseEntity<ApiErrorResponse> handleNoHandlerFound(NoHandlerFoundException ex) {
 		String url = ex.getRequestURL();
 
-		log.warn("[Not Found] url={}", url);
+		log.warn("[Not Found] url={}", url, ex);
 		return toResponse(ErrorCode.BAD_REQUEST);
 	}
 

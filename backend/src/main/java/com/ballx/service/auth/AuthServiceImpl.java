@@ -13,7 +13,6 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-
 	private final SmsProvider smsProvider;
 	private final RedisCache redisCache;
 

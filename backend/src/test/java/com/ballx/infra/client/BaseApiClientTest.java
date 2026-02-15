@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
+import com.ballx.infra.client.base.BaseApiClient;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,18 +47,39 @@ class BaseApiClientTest {
 	static final String BASE_URL = "https://jsonplaceholder.typicode.com";
 
 	static class TestApiClient extends BaseApiClient {
+		public TestApiClient(RestClient restClient) {
+			super(restClient);
+		}
+
+		@Override
+		protected <T> T get(
+			String url,
+			Map<String, String> headers,
+			Map<String, ?> query,
+			Class<T> responseType
+		) {
+			return super.get(url, headers, query, responseType);
+		}
+
+		@Override
+		protected <T> T post(
+			String uri,
+			Object body,
+			Class<T> responseType
+		) {
+			return super.post(uri, body, responseType);
+		}
 	}
 
 	@BeforeEach
 	void setup() {
-		testApiClient = new TestApiClient();
+		testApiClient = new TestApiClient(restClient);
 	}
 
 	@Test
 	void restClient_get_요청_성공_테스트() {
 		Map<String, String> query = Map.of("postId", "2");
 		String result = testApiClient.get(
-			restClient,
 			BASE_URL + "/comments",
 			null,
 			query,
@@ -71,7 +94,6 @@ class BaseApiClientTest {
 
 		CustomException exception = assertThrows(CustomException.class, () -> {
 			testApiClient.get(
-				restClient,
 				BASE_URL + "/posts/99999999",
 				String.class
 			);
@@ -87,7 +109,6 @@ class BaseApiClientTest {
 			"userId", 1
 		);
 		String result = testApiClient.post(
-			restClient,
 			BASE_URL + "/posts",
 			body,
 			String.class
